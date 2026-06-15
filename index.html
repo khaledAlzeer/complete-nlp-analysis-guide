@@ -1,0 +1,3484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLP Linguistic Analysis — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ============================================
+   ROOT VARIABLES & RESET
+   ============================================ */
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface-2: #f2f0eb;
+  --border: #e4e0d8;
+  --accent: #2a6496;
+  --accent-light: #deeaf4;
+  --accent-2: #e8621a;
+  --text: #1a1917;
+  --text-muted: #6b6760;
+  --text-light: #9c9890;
+  --code-bg: #1e1e2e;
+  --code-surface: #2a2a3e;
+  --code-border: #3a3a50;
+  --green: #2d8a4e;
+  --green-light: #e8f5ee;
+  --amber: #b45309;
+  --amber-light: #fef3c7;
+  --blue-light: #eff6ff;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --sidebar-w: 260px;
+  --overlay: rgba(15, 23, 42, 0.45);
+  --btn-size: 44px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   COVER PAGE
+   ============================================ */
+.cover {
+  background: var(--code-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(42,100,150,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(232,98,26,0.2) 0%, transparent 60%);
+}
+
+.cover-inner { position: relative; z-index: 1; max-width: 720px; }
+
+.cover-badge {
+  display: inline-block;
+  background: rgba(42,100,150,0.3);
+  border: 1px solid rgba(42,100,150,0.5);
+  color: #7eb8e0;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+}
+
+.cover h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 6vw, 64px);
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.cover h1 em { font-style: italic; color: #7eb8e0; }
+
+.cover-sub {
+  color: #9ca3b8;
+  font-size: 16px;
+  margin-bottom: 48px;
+  font-weight: 400;
+}
+
+.cover-levels {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.chapter-main {
+    width: 100%;
+    max-width: 700px;
+    text-align: left;
+}
+
+/* Standard level pill */
+.level-pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 10px 18px;
+  color: #e2e4ec;
+  font-size: 13px;
+}
+
+.level-pill span {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #7eb8e0;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* Expanded chapter 1 pill */
+.chapter-main {
+  min-width: 200px;
+  text-align: left;
+}
+
+.chapter-main small {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.8;
+  color: #b8bfce;
+  font-size: 12px;
+}
+
+.cover-meta {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.cover-meta strong { color: #9ca3b8; }
+
+/* ============================================
+   MAIN LAYOUT CONTAINER
+   ============================================ */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+
+@media (max-width: 640px) { .container { padding: 32px 20px; } }
+
+/* ============================================
+   TABLE OF CONTENTS
+   ============================================ */
+.toc-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  margin-bottom: 40px;
+}
+
+.toc-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+/* TOC chapter group label */
+.toc-chapter {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 14px 0 6px;
+  border-bottom: 2px solid var(--accent-light);
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+.toc-list { list-style: none; }
+
+.toc-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-list li:last-child { border-bottom: none; }
+
+.toc-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 28px;
+  font-weight: 500;
+}
+
+.toc-label { flex: 1; font-weight: 500; color: var(--text); }
+.toc-sub { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+
+/* ============================================
+   CHAPTER HEADER BLOCK (used at top of each chapter)
+   ============================================ */
+.chapter-header-block {
+  margin-bottom: 32px;
+}
+
+/* ============================================
+   SECTION HEADERS & TITLES
+   ============================================ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 48px 0 28px;
+}
+
+/* Level / chapter badge colors */
+.section-level-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: var(--accent);
+  color: white;
+  white-space: nowrap;
+}
+
+.section-level-badge.morph     { background: #5b47a8; }
+.section-level-badge.syntax    { background: var(--green); }
+.section-level-badge.semantic  { background: var(--accent-2); }
+.section-level-badge.pragmatic { background: #7c3aed; }
+.section-level-badge.spacy     { background: #0891b2; }
+.section-level-badge.sentiment { background: #be123c; }
+.section-level-badge.summary   { background: #1a1917; }
+
+.section-divider { flex: 1; height: 1px; background: var(--border); }
+
+h2.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+/* Subsection headings with left border accent */
+h3.subsection {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 32px 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+h3.subsection.morph     { border-left-color: #5b47a8; }
+h3.subsection.syntax    { border-left-color: var(--green); }
+h3.subsection.semantic  { border-left-color: var(--accent-2); }
+h3.subsection.pragmatic { border-left-color: #7c3aed; }
+h3.subsection.spacy     { border-left-color: #0891b2; }
+h3.subsection.sentiment { border-left-color: #be123c; }
+
+p { margin-bottom: 14px; color: var(--text); }
+p:last-child { margin-bottom: 0; }
+
+/* ============================================
+   CALLOUT BOXES
+   ============================================ */
+.callout {
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 18px 0;
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+
+.callout-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.callout.def  { background: var(--blue-light); border-left: 3px solid var(--accent); }
+.callout.def  .callout-label { color: var(--accent); }
+.callout.tip  { background: var(--green-light); border-left: 3px solid var(--green); }
+.callout.tip  .callout-label { color: var(--green); }
+.callout.note { background: var(--amber-light); border-left: 3px solid var(--amber); }
+.callout.note .callout-label { color: var(--amber); }
+.callout.info { background: #f0f0ff; border-left: 3px solid #5b47a8; }
+.callout.info .callout-label { color: #5b47a8; }
+.callout.warn { background: #fdf2f8; border-left: 3px solid #7c3aed; }
+.callout.warn .callout-label { color: #7c3aed; }
+
+/* ============================================
+   CODE BLOCKS
+   ============================================ */
+.code-block {
+  background: var(--code-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 18px 0;
+  border: 1px solid var(--code-border);
+}
+
+.code-header {
+  background: var(--code-surface);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--code-border);
+}
+
+.code-dots { display: flex; gap: 6px; }
+.code-dot  { width: 10px; height: 10px; border-radius: 50%; }
+.code-dot:nth-child(1) { background: #ff5f57; }
+.code-dot:nth-child(2) { background: #ffbd2e; }
+.code-dot:nth-child(3) { background: #28c840; }
+
+.code-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #6b7280; flex: 1; }
+
+.code-lang {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #4b5563;
+  background: rgba(255,255,255,0.05);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+pre { padding: 18px 20px; overflow-x: auto; margin: 0; }
+
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #cdd6f4;
+}
+
+/* Python syntax highlighting */
+.kw { color: #cba6f7; }
+.fn { color: #89b4fa; }
+.st { color: #a6e3a1; }
+.cm { color: #6c7086; font-style: italic; }
+.nu { color: #fab387; }
+.bi { color: #f38ba8; }
+.cl { color: #f9e2af; }
+.op { color: #89dceb; }
+
+/* Output block */
+.output-block {
+  background: #0d1117;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-top: 1px dashed var(--code-border);
+}
+
+.output-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #28c840;
+  padding: 8px 20px 0;
+}
+
+.output-block pre code { color: #e2e8f0; font-size: 12.5px; }
+
+/* ============================================
+   DATA TABLES
+   ============================================ */
+.table-wrap {
+  overflow-x: auto;
+  margin: 18px 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead tr { background: var(--surface-2); }
+
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover   { background: var(--surface-2); }
+
+/* Tag pills */
+.tag-pill {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.tag-pill.verb  { background: #fce7f3; color: #9d174d; }
+.tag-pill.adj   { background: var(--green-light); color: #166534; }
+.tag-pill.det   { background: var(--amber-light); color: var(--amber); }
+.tag-pill.other { background: var(--surface-2); color: var(--text-muted); }
+
+/* ============================================
+   PIPELINE DIAGRAM
+   ============================================ */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 20px 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.pipe-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  text-align: center;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.pipe-step .pipe-icon  { font-size: 18px; margin-bottom: 4px; }
+.pipe-step .pipe-label { font-size: 12px; font-weight: 600; color: var(--text); display: block; }
+.pipe-step .pipe-sub   { font-size: 10px; color: var(--text-light); font-family: 'DM Mono', monospace; }
+.pipe-arrow            { color: var(--text-light); font-size: 18px; flex-shrink: 0; padding: 0 4px; }
+
+/* ============================================
+   SUMMARY TABLE
+   ============================================ */
+.summary-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+.summary-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.summary-table thead tr { background: #1a1917; }
+
+.summary-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9ca3b8;
+  border-bottom: none;
+  white-space: nowrap;
+}
+
+.summary-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.summary-table tr:last-child td { border-bottom: none; }
+
+.level-row-1 { background: #eff9ff; }  .level-row-1:hover { background: #deeaf4; }
+.level-row-2 { background: #f5f3ff; }  .level-row-2:hover { background: #ede9fe; }
+.level-row-3 { background: #f0fdf4; }  .level-row-3:hover { background: #dcfce7; }
+.level-row-4 { background: #fff7ed; }  .level-row-4:hover { background: #ffedd5; }
+.level-row-5 { background: #fdf4ff; }  .level-row-5:hover { background: #f3e8ff; }
+
+.level-chip {
+  display: inline-block;
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chip-1 { background: var(--accent);   color: white; }
+.chip-2 { background: #5b47a8;         color: white; }
+.chip-3 { background: var(--green);    color: white; }
+.chip-4 { background: var(--accent-2); color: white; }
+.chip-5 { background: #7c3aed;         color: white; }
+
+.task-name { font-weight: 600; display: block; margin-bottom: 2px; }
+
+code.inline {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+}
+
+.downloads-list { display: flex; flex-direction: column; gap: 2px; }
+
+.dl-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.04);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.output-badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ob-tokens { background: #dbeafe; color: #1e40af; }
+.ob-stems  { background: #fce7f3; color: #9d174d; }
+.ob-lemma  { background: var(--green-light); color: #166534; }
+.ob-tags   { background: var(--amber-light); color: var(--amber); }
+.ob-tree   { background: #f0f0ff; color: #4c1d95; }
+.ob-graph  { background: var(--surface-2); color: var(--text-muted); }
+.ob-ner    { background: #fff7ed; color: #9a3412; }
+.ob-scd    { background: #fdf4ff; color: #7c3aed; }
+.ob-wsd    { background: #f0fdf4; color: #166534; }
+
+/* ============================================
+   CHEAT-SHEET GRID
+   ============================================ */
+.cheat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.cheat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.cheat-card .cc-download {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: block;
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+
+.cheat-card .cc-used { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
+.cheat-card .cc-fn   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-light); }
+
+/* ============================================
+   PIPELINE STEPS TABLE
+   ============================================ */
+.pipeline-steps {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.ps-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 2fr 2fr;
+  align-items: start;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ps-row:last-child { border-bottom: none; }
+.ps-row.ps-head   { background: var(--surface-2); }
+
+.ps-cell { padding: 12px 14px; font-size: 13.5px; border-right: 1px solid var(--border); }
+.ps-cell:last-child { border-right: none; }
+
+.ps-head .ps-cell {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 14px;
+}
+
+.step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+/* ============================================
+   SCD ANNOTATION BLOCK
+   ============================================ */
+.scd-annotation {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin: 18px 0;
+}
+
+.scd-annotation .scd-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 14px;
+}
+
+.scd-sentence { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+
+.scd-token { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.scd-word  { font-weight: 600; font-size: 15px; color: var(--text); }
+
+.scd-class {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.scd-class.consumption { background: #fce7f3; color: #9d174d; }
+.scd-class.food        { background: var(--green-light); color: #166534; }
+.scd-class.time        { background: var(--amber-light); color: var(--amber); }
+.scd-class.person      { background: var(--accent-light); color: var(--accent); }
+.scd-class.neutral     { background: var(--surface-2); color: var(--text-muted); }
+.scd-class.feeling     { background: #fdf4ff; color: #7c3aed; }
+.scd-class.animal      { background: #f0fdf4; color: #166534; }
+.scd-class.possession  { background: #fff7ed; color: #9a3412; }
+
+/* ============================================
+   COMPARE CARDS (NER vs SCD, Subjective vs Objective)
+   ============================================ */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+@media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+
+.compare-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.compare-card .cc-header {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.compare-card.nltk .cc-header  { background: var(--accent-light); color: var(--accent); }
+.compare-card.spacy .cc-header { background: #cffafe; color: #0891b2; }
+
+.compare-card ul { list-style: none; }
+.compare-card ul li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--text);
+}
+.compare-card ul li:last-child { border-bottom: none; }
+
+/* ============================================
+   SPACY PIPELINE VISUAL
+   ============================================ */
+.spacy-pipeline {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.spacy-pipe-step {
+  flex: 1;
+  padding: 16px 12px;
+  text-align: center;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.spacy-pipe-step:last-child { border-right: none; }
+
+.spacy-pipe-step .sp-num {
+  display: inline-block;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #0891b2;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 22px;
+  margin-bottom: 8px;
+}
+
+.spacy-pipe-step .sp-label { display: block; font-size: 12px; font-weight: 600; color: var(--text); }
+.spacy-pipe-step .sp-sub   { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: #0891b2; margin-top: 2px; }
+
+/* ============================================
+   SENTIMENT POLARITY BAR
+   ============================================ */
+.polarity-bar-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin: 18px 0;
+}
+
+.polarity-bar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.polarity-track {
+  height: 12px;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #dc2626 0%, #d97706 40%, #e5e7eb 50%, #65a30d 75%, #16a34a 100%);
+  margin-bottom: 8px;
+}
+
+.polarity-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-muted);
+}
+
+.polarity-labels span:nth-child(2) { color: #d97706; }
+.polarity-labels span:nth-child(3) { color: var(--text-light); }
+.polarity-labels span:nth-child(4) { color: var(--green); }
+
+/* ============================================
+   SENTIMENT SCORE CARDS
+   ============================================ */
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 18px 0;
+}
+
+@media (max-width: 640px) { .score-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  text-align: center;
+}
+
+.score-card .sc-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.score-card.neg .sc-key  { color: #dc2626; }
+.score-card.neu .sc-key  { color: var(--text-muted); }
+.score-card.pos .sc-key  { color: var(--green); }
+.score-card.comp .sc-key { color: var(--accent); }
+
+.score-card .sc-val  { font-size: 22px; font-weight: 700; color: var(--text); }
+.score-card .sc-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* ============================================
+   CHAPTER DIVIDER (dark banner between chapters)
+   ============================================ */
+.chapter-divider {
+  background: var(--code-bg);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin: 56px 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.chapter-divider .ch-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 48px;
+  color: rgba(255,255,255,0.08);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chapter-divider .ch-content { flex: 1; }
+
+.chapter-divider .ch-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #7eb8e0;
+  margin-bottom: 6px;
+}
+
+.chapter-divider .ch-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: #ffffff; }
+.chapter-divider .ch-sub   { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.doc-footer {
+  background: #1a1917;
+  color: #6b7280;
+  text-align: center;
+  padding: 28px 32px;
+  margin-top: 60px;
+  font-size: 13px;
+}
+
+.doc-footer strong { color: #9ca3b8; }
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+.text-muted { color: var(--text-muted); }
+.mono       { font-family: 'DM Mono', monospace; font-size: 12px; }
+
+ul.bullet-list { padding-left: 20px; margin: 10px 0; }
+ul.bullet-list li { margin-bottom: 5px; color: var(--text); }
+
+/* ============================================
+   SPEED DIAL FLOATING MENU
+   ============================================ */
+.speed-dial { position: fixed; right: 20px; bottom: 20px; z-index: 9999; }
+
+.dial-toggle {
+  width: 60px; height: 60px;
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  background: #6c63ff; color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  transition: 0.3s;
+}
+
+.dial-toggle:hover { transform: scale(1.1); }
+
+.dial-item {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white; color: #333;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.dial-item span { font-weight: 600; white-space: nowrap; }
+
+.speed-dial.active .dial-item { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.speed-dial.active .dial-item:nth-child(1) { bottom: 210px; }
+.speed-dial.active .dial-item:nth-child(2) { bottom: 145px; }
+.speed-dial.active .dial-item:nth-child(3) { bottom: 80px; }
+.speed-dial.active .dial-toggle i { transform: rotate(45deg); }
+
+@media (max-width: 768px) {
+  .speed-dial { right: 15px; bottom: 15px; }
+  .dial-toggle { width: 52px; height: 52px; font-size: 1.2rem; }
+  .dial-item { padding: 10px 14px; font-size: 0.85rem; }
+  .speed-dial.active .dial-item:nth-child(1) { bottom: 180px; }
+  .speed-dial.active .dial-item:nth-child(2) { bottom: 125px; }
+  .speed-dial.active .dial-item:nth-child(3) { bottom: 70px; }
+}
+
+@media (max-width: 480px) {
+  .speed-dial { right: 12px; bottom: 12px; }
+  .dial-toggle { width: 48px; height: 48px; font-size: 1rem; }
+  .dial-item { padding: 9px 12px; font-size: 0.8rem; gap: 8px; }
+  .dial-item span { max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+  .speed-dial.active .dial-item:nth-child(1) { bottom: 165px; }
+  .speed-dial.active .dial-item:nth-child(2) { bottom: 115px; }
+  .speed-dial.active .dial-item:nth-child(3) { bottom: 65px; }
+}
+
+@media (max-width: 360px) {
+  .dial-item span { display: none; }
+  .dial-item { width: 48px; height: 48px; padding: 0; justify-content: center; border-radius: 50%; }
+}
+
+/* ============================================
+   SIDEBAR — FIXED NAVIGATION DRAWER
+   ============================================ */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w); height: 100dvh;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid var(--border);
+  box-shadow: 4px 0 30px rgba(0,0,0,0.04);
+  z-index: 1002;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-light) transparent;
+}
+
+.sidebar::-webkit-scrollbar       { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--accent-light); border-radius: 10px; }
+
+.sidebar-inner { padding: 32px 22px; }
+
+.sidebar-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  margin-bottom: 32px;
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.sidebar-group {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  padding: 14px 14px 4px;
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover { background: var(--surface-2); color: var(--text); transform: translateX(4px); }
+.nav-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Active nav link (set by JS scrollspy) */
+.sidebar .nav-link.is-active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.sidebar .nav-link.is-active::before {
+  content: "";
+  position: absolute; left: 0; top: 20%; height: 60%; width: 3px;
+  background: var(--accent); border-radius: 10px;
+}
+
+/* CSS-only :has() scrollspy fallback */
+body:not(:has(:target)) .sidebar a[href="#intro"] { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+body:not(:has(:target)) .sidebar a[href="#intro"]::before {
+  content: ""; position: absolute; left: 0; top: 20%; height: 60%; width: 3px;
+  background: var(--accent); border-radius: 10px;
+}
+
+body:has(#intro:target)         .sidebar a[href="#intro"],
+body:has(#lexical:target)       .sidebar a[href="#lexical"],
+body:has(#morphological:target) .sidebar a[href="#morphological"],
+body:has(#syntax:target)        .sidebar a[href="#syntax"],
+body:has(#semantic:target)      .sidebar a[href="#semantic"],
+body:has(#pragmatic:target)     .sidebar a[href="#pragmatic"],
+body:has(#spacy:target)         .sidebar a[href="#spacy"],
+body:has(#sentiment:target)     .sidebar a[href="#sentiment"],
+body:has(#summary:target)       .sidebar a[href="#summary"] {
+  background: var(--accent-light); color: var(--accent); font-weight: 600;
+}
+
+body:has(#intro:target)         .sidebar a[href="#intro"]::before,
+body:has(#lexical:target)       .sidebar a[href="#lexical"]::before,
+body:has(#morphological:target) .sidebar a[href="#morphological"]::before,
+body:has(#syntax:target)        .sidebar a[href="#syntax"]::before,
+body:has(#semantic:target)      .sidebar a[href="#semantic"]::before,
+body:has(#pragmatic:target)     .sidebar a[href="#pragmatic"]::before,
+body:has(#spacy:target)         .sidebar a[href="#spacy"]::before,
+body:has(#sentiment:target)     .sidebar a[href="#sentiment"]::before,
+body:has(#summary:target)       .sidebar a[href="#summary"]::before {
+  content: ""; position: absolute; left: 0; top: 20%; height: 60%; width: 3px;
+  background: var(--accent); border-radius: 10px;
+}
+
+/* Shift content right on desktop to clear sidebar */
+.container, .cover { margin-left: var(--sidebar-w); transition: margin 0.3s ease; }
+
+/* ============================================
+   MOBILE SIDEBAR TOGGLE
+   ============================================ */
+.sidebar-toggle { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.sidebar-btn, .sidebar-overlay { display: none; }
+
+@media (max-width: 900px) {
+  .sidebar-btn {
+    display: grid; place-items: center;
+    position: fixed; left: 16px; top: 14px; z-index: 1003;
+    width: var(--btn-size); height: var(--btn-size);
+    background: rgba(255,255,255,0.75); backdrop-filter: blur(14px);
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    cursor: pointer; user-select: none;
+  }
+
+  .sidebar-btn::before { content: "☰"; font-size: 18px; line-height: 1; color: var(--text); }
+
+  .sidebar-overlay {
+    display: block; position: fixed; inset: 0; z-index: 1001;
+    background: var(--overlay); opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .sidebar {
+    transform: translateX(-105%); transition: transform 0.28s ease;
+    border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius);
+    box-shadow: 18px 0 60px rgba(0,0,0,0.18);
+  }
+
+  .container, .cover { margin-left: 0 !important; }
+
+  .sidebar-toggle:checked ~ .sidebar          { transform: translateX(0); }
+  .sidebar-toggle:checked ~ .sidebar-overlay  { opacity: 1; pointer-events: auto; }
+  .sidebar-toggle:checked + .sidebar-btn::before { content: "✕"; font-size: 18px; }
+
+  .nav-link { padding: 12px 14px; font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar, .container, .cover, .nav-link, .sidebar-overlay { transition: none !important; }
+  .nav-link:hover { transform: none !important; }
+}
+
+/* ============================================
+   SCROLL PROGRESS BAR
+   ============================================ */
+.scroll-progress {
+  position: fixed; top: 0; left: 0;
+  height: 4px; width: 100%;
+  background: transparent; z-index: 10050;
+}
+
+.scroll-progress__bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 0 999px 999px 0;
+  box-shadow: 0 6px 18px rgba(42,100,150,0.25);
+  transition: width 0.1s linear;
+}
+
+/* Print */
+@media print {
+  .cover { min-height: auto; padding: 40px; page-break-after: always; }
+  .code-block, .table-wrap { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" aria-hidden="true">
+  <div class="scroll-progress__bar" id="scrollProgressBar"></div>
+</div>
+
+<!-- Mobile sidebar toggle -->
+<input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" />
+<label for="sidebar-toggle" class="sidebar-btn" aria-label="Toggle sidebar"></label>
+<label for="sidebar-toggle" class="sidebar-overlay" aria-hidden="true"></label>
+
+<!-- ============================================
+     SIDEBAR NAVIGATION
+     ============================================ -->
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <div class="sidebar-logo">NLP Docs</div>
+    <nav class="sidebar-nav">
+
+      <div class="sidebar-group">Chapter 1 · Linguistic Levels</div>
+      <a href="#intro"         class="nav-link">Introduction</a>
+      <a href="#lexical"       class="nav-link">Level 1 · Lexical</a>
+      <a href="#morphological" class="nav-link">Level 2 · Morphological</a>
+      <a href="#syntax"        class="nav-link">Level 3 · Syntactic</a>
+      <a href="#semantic"      class="nav-link">Level 4 · Semantic (NER + SCD)</a>
+      <a href="#pragmatic"     class="nav-link">Level 5 · Pragmatic (WSD)</a>
+
+      <div class="sidebar-group">Chapter 2 · spaCy Library</div>
+      <a href="#spacy"         class="nav-link">spaCy Overview</a>
+
+      <div class="sidebar-group">Chapter 3 · Sentiment Analysis</div>
+      <a href="#sentiment"     class="nav-link">Sentiment Analysis</a>
+
+      <div class="sidebar-group">Reference</div>
+      <a href="#summary"       class="nav-link">Summary &amp; Cheat Sheet</a>
+
+    </nav>
+  </div>
+</aside>
+
+<!-- ============================================
+     COVER PAGE
+     ============================================ -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-badge">University Lecture Notes · Python NLTK &amp; spaCy</div>
+    <h1>NLP Linguistic<br><em>Analysis Guide</em></h1>
+    <p class="cover-sub">Complete walkthrough — Levels 1 through 5 · spaCy Library · Sentiment Analysis</p>
+
+    <div class="cover-levels">
+      <div class="level-pill chapter-main">
+        <span>Chapter 1</span>
+        Linguistic Levels
+        <small>
+          Level 1 · Lexical Analysis / Tokenization / Stop Words Removal<br>
+          Level 2 · Morphological / Stemming / Lemmatization<br>
+          Level 3 · Syntactic / POS / Shallow Parsing / Constituency Parsing + Dependency Parsing <br>
+          Level 4 · Semantic / NER / SCD<br>
+          Level 5 · Pragmatic / WSD
+        </small>
+      </div>
+      <div class="level-pill"><span>Chapter 2</span>spaCy Library</div>
+      <div class="level-pill"><span>Chapter 3</span>Sentiment Analysis</div>
+    </div>
+
+    <div class="cover-meta">Created by <strong>Khaled Alzeer</strong></div>
+  </div>
+</div>
+
+<!-- ============================================
+     MAIN CONTENT
+     ============================================ -->
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc-section">
+    <div class="toc-title">Table of Contents</div>
+
+    <div class="toc-chapter">Chapter 1 — NLP Linguistic Levels</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">1</span><span class="toc-label">Introduction to NLTK &amp; NLP Levels Overview</span></li>
+      <li><span class="toc-num">2</span><span class="toc-label">Level 1 — Lexical Analysis</span><span class="toc-sub">Tokenization · Stop Words</span></li>
+      <li><span class="toc-num">3</span><span class="toc-label">Level 2 — Morphological Analysis</span><span class="toc-sub">Stemming · Lemmatization · Stemming vs Lemmatization</span></li>
+      <li><span class="toc-num">4</span><span class="toc-label">Level 3 — Syntactic Analysis</span><span class="toc-sub">POS Tagging · Chunking · Constituency &amp; Dependency Parsing</span></li>
+      <li><span class="toc-num">5</span><span class="toc-label">Level 4 — Semantic Analysis</span><span class="toc-sub">NER · Semantic Class Disambiguation (SCD)</span></li>
+      <li><span class="toc-num">6</span><span class="toc-label">Level 5 — Pragmatic Analysis</span><span class="toc-sub">Word Sense Disambiguation (WSD) · Lesk Algorithm</span></li>
+    </ul>
+
+    <div class="toc-chapter">Chapter 2 — spaCy Library</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">7</span><span class="toc-label">spaCy Overview · Installation · Pipelines</span><span class="toc-sub">Tokenization · Lemmatization · POS · NER · Dependency Parsing</span></li>
+    </ul>
+
+    <div class="toc-chapter">Chapter 3 — Sentiment Analysis</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">8</span><span class="toc-label">Sentiment Analysis</span><span class="toc-sub">Types · BoW · N-grams · VADER · NLTK SentimentIntensityAnalyzer</span></li>
+    </ul>
+
+    <div class="toc-chapter">Reference</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">9</span><span class="toc-label">Summary Table &amp; Full Pipeline Cheat Sheet</span></li>
+    </ul>
+  </div>
+
+
+  <!-- ==========================================
+       CHAPTER 1 HEADER BLOCK
+       matches same style as chapters 2 & 3
+       ========================================== -->
+  <div class="chapter-divider">
+    <div class="ch-num">01</div>
+    <div class="ch-content">
+      <div class="ch-eyebrow">Chapter 1</div>
+      <div class="ch-title">NLP Linguistic Levels</div>
+      <div class="ch-sub">Levels 1–5 · Lexical · Morphological · Syntactic · Semantic · Pragmatic</div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SECTION 1 — INTRODUCTION
+       ========================================== -->
+  <section id="intro">
+    <div class="section-header">
+      <span class="section-level-badge">Section 1</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Introduction &amp; Overview</h2>
+
+    <h3 class="subsection">1.1 What is NLTK?</h3>
+    <p>The Natural Language Toolkit (NLTK) is a free, open-source Python package providing interfaces for text processing, linguistic structure analysis, and access to a large collection of corpora. It is the leading platform for building Python programs to work with human language data.</p>
+    <p>NLTK provides interfaces to over 50 corpora and lexical resources such as WordNet, along with libraries for:</p>
+    <ul class="bullet-list">
+      <li>Tokenization &amp; Stop Word Removal</li>
+      <li>Stemming &amp; Lemmatization</li>
+      <li>POS Tagging, Parsing &amp; Chunking</li>
+      <li>Semantic Analysis &amp; Classification</li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <div class="callout-label">Tip</div>
+        Python NLTK Demos available at: <strong>http://text-processing.com/demo/</strong>
+      </div>
+    </div>
+
+    <h3 class="subsection">1.2 The Five Levels of NLP Analysis</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Level</th><th>Name</th><th>Description</th><th>Key Tasks</th></tr></thead>
+        <tbody>
+          <tr><td><span class="level-chip chip-1">1</span></td><td><strong>Lexical</strong></td><td>Breaks text into words and cleans it</td><td>Tokenization, Stop Words, Lowercasing</td></tr>
+          <tr><td><span class="level-chip chip-2">2</span></td><td><strong>Morphological</strong></td><td>Studies word formation and structure</td><td>Stemming, Lemmatization</td></tr>
+          <tr><td><span class="level-chip chip-3">3</span></td><td><strong>Syntactic</strong></td><td>Analyzes grammar and sentence structure</td><td>POS Tagging, Chunking, Parsing</td></tr>
+          <tr><td><span class="level-chip chip-4">4</span></td><td><strong>Semantic</strong></td><td>Extracts meaning from text</td><td>NER, SCD, Sense Detection</td></tr>
+          <tr><td><span class="level-chip chip-5">5</span></td><td><strong>Pragmatic</strong></td><td>Resolves word ambiguity in context</td><td>WSD, Lesk Algorithm</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection">1.3 Full NLP Processing Pipeline</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><div class="pipe-icon">📄</div><span class="pipe-label">Raw Text</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">🔤</div><span class="pipe-label">Tokens</span><span class="pipe-sub">Lexical</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">🌱</div><span class="pipe-label">Root Forms</span><span class="pipe-sub">Morphological</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">🏷️</div><span class="pipe-label">POS Tags</span><span class="pipe-sub">Syntactic</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">🌳</div><span class="pipe-label">Structure</span><span class="pipe-sub">Syntactic</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">💡</div><span class="pipe-label">Meaning</span><span class="pipe-sub">Semantic</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="pipe-icon">🔍</div><span class="pipe-label">Sense</span><span class="pipe-sub">Pragmatic</span></div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 2 — LEVEL 1: LEXICAL ANALYSIS
+       (Tokenization + Stop Words only)
+       ========================================== -->
+  <section id="lexical">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge">Level 1</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Lexical Analysis</h2>
+    <p class="text-muted">Tokenization · Stop Words</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Lexical Analysis is the first stage of NLP. It breaks raw text into meaningful units (tokens) and removes noise (stop words, punctuation) to prepare clean data for further processing.
+      </div>
+    </div>
+
+    <!-- Setup -->
+    <h3 class="subsection">Required Libraries &amp; Setup</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Python — Imports &amp; Setup</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize, sent_tokenize
+<span class="kw">from</span> nltk.corpus <span class="kw">import</span> stopwords
+
+<span class="cm"># Required NLTK downloads (run once)</span>
+nltk.<span class="fn">download</span>(<span class="st">'punkt_tab'</span>)   <span class="cm"># Tokenizer models</span>
+nltk.<span class="fn">download</span>(<span class="st">'stopwords'</span>)   <span class="cm"># Stop words corpus</span></code></pre>
+    </div>
+
+    <h3 class="subsection">Lexical Analysis Pipeline</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="pipe-label">Raw Text</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">Sentence Split</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">Word Split</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">Lowercase</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">Remove Stop Words</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">✅ Clean Tokens</span></div>
+    </div>
+
+    <!-- 1.1 Tokenization -->
+    <h3 class="subsection">1.1 Tokenization</h3>
+    <p>Tokenization divides text into smaller parts called tokens. It is the base step for all further NLP processing. NLTK provides two main methods:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Function</th><th>Returns</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Word Tokenize</strong></td><td><code class="inline">word_tokenize()</code></td><td>List of words</td><td>Splits text into individual word tokens</td></tr>
+          <tr><td><strong>Sentence Tokenize</strong></td><td><code class="inline">sent_tokenize()</code></td><td>List of sentences</td><td>Splits text into individual sentences</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">word_tokenize() — Example</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+nltk.<span class="fn">download</span>(<span class="st">'punkt_tab'</span>)
+
+text = <span class="st">"Hello there! How are you doing today?"</span>
+words = <span class="fn">word_tokenize</span>(text)
+<span class="fn">print</span>(words)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['Hello', 'there', '!', 'How', 'are', 'you', 'doing', 'today', '?']</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">sent_tokenize() — Example</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.tokenize <span class="kw">import</span> sent_tokenize
+text = <span class="st">"Hello there! How are you doing today? NLTK is very useful."</span>
+sentences = <span class="fn">sent_tokenize</span>(text)
+<span class="fn">print</span>(sentences)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['Hello there!', 'How are you doing today?', 'NLTK is very useful.']</code></pre>
+      </div>
+    </div>
+
+    <!-- 1.2 Stop Words -->
+    <h3 class="subsection">1.2 Stop Words Removal</h3>
+    <p>Stop words are commonly used words (such as "the", "a", "an", "in") that carry little semantic value and are typically ignored in processing. NLTK includes stop words lists for 16 different languages.</p>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Note</div>
+        You can customize the stop words list by editing <code class="inline">nltk_data/corpora/stopwords/english.txt</code>.
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Stop Words Removal — Complete Example</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk.corpus <span class="kw">import</span> stopwords
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+
+nltk.<span class="fn">download</span>(<span class="st">'punkt_tab'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'stopwords'</span>)
+
+sentence = <span class="st">"I went to the university in the morning with my friend."</span>
+words = <span class="fn">word_tokenize</span>(sentence)
+
+stop_words = <span class="fn">set</span>(stopwords.<span class="fn">words</span>(<span class="st">'english'</span>))
+filtered_words = [word <span class="kw">for</span> word <span class="kw">in</span> words <span class="kw">if</span> word.<span class="fn">lower</span>() <span class="kw">not in</span> stop_words]
+
+<span class="fn">print</span>(<span class="st">"Original:"</span>, sentence)
+<span class="fn">print</span>(<span class="st">"Filtered:"</span>, <span class="st">" "</span>.<span class="fn">join</span>(filtered_words))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Original: I went to the university in the morning with my friend.
+Filtered: went university morning friend .</code></pre>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 3 — LEVEL 2: MORPHOLOGICAL ANALYSIS
+       (Stemming + Lemmatization + comparison)
+       ========================================== -->
+  <section id="morphological">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge morph">Level 2</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Morphological Analysis</h2>
+    <p class="text-muted">Stemming · Lemmatization · Comparison</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Morphological Analysis studies the internal structure of words — how words are formed and how their forms change. The two main techniques are <strong>Stemming</strong> (rule-based reduction to a root) and <strong>Lemmatization</strong> (dictionary-based reduction to the canonical form).
+      </div>
+    </div>
+
+    <!-- 2.1 Stemming -->
+    <h3 class="subsection morph">2.1 Stemming</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Stemming removes prefixes and suffixes from a word to reduce it to its root/stem form. The result may not always be a real dictionary word.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stemmer</th><th>Class</th><th>Aggression</th><th>Notes</th><th>"running" →</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Porter</strong></td><td><code class="inline">PorterStemmer</code></td><td>Moderate</td><td>Most common &amp; widely used</td><td><code class="inline">run</code></td></tr>
+          <tr><td><strong>Lancaster</strong></td><td><code class="inline">LancasterStemmer</code></td><td>High</td><td>Very aggressive, shortest roots</td><td><code class="inline">run</code></td></tr>
+          <tr><td><strong>Snowball</strong></td><td><code class="inline">SnowballStemmer</code></td><td>Moderate–Low</td><td>Multi-language support</td><td><code class="inline">run</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">a) Porter Stemmer</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.stem <span class="kw">import</span> PorterStemmer
+stemmer = <span class="cl">PorterStemmer</span>()
+words = [<span class="st">"running"</span>, <span class="st">"happiness"</span>, <span class="st">"flies"</span>, <span class="st">"studying"</span>]
+stemmed = [stemmer.<span class="fn">stem</span>(word) <span class="kw">for</span> word <span class="kw">in</span> words]
+<span class="fn">print</span>(stemmed)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['run', 'happi', 'fli', 'studi']</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">b) Lancaster Stemmer</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.stem <span class="kw">import</span> LancasterStemmer
+stemmer = <span class="cl">LancasterStemmer</span>()
+words = [<span class="st">"running"</span>, <span class="st">"happiness"</span>, <span class="st">"flies"</span>, <span class="st">"studying"</span>]
+stemmed = [stemmer.<span class="fn">stem</span>(word) <span class="kw">for</span> word <span class="kw">in</span> words]
+<span class="fn">print</span>(stemmed)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['run', 'happy', 'fli', 'study']</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">c) Snowball Stemmer</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.stem <span class="kw">import</span> SnowballStemmer
+stemmer = <span class="cl">SnowballStemmer</span>(<span class="st">"english"</span>)
+words = [<span class="st">"running"</span>, <span class="st">"happiness"</span>, <span class="st">"flies"</span>, <span class="st">"studying"</span>]
+stemmed_words = [stemmer.<span class="fn">stem</span>(word) <span class="kw">for</span> word <span class="kw">in</span> words]
+<span class="fn">print</span>(<span class="st">"Original:"</span>, words)
+<span class="fn">print</span>(<span class="st">"Snowball:"</span>, stemmed_words)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Original:  ['running', 'happiness', 'flies', 'studying']
+Snowball:  ['run', 'happi', 'fli', 'studi']</code></pre>
+      </div>
+    </div>
+
+    <!-- 2.2 Lemmatization -->
+    <h3 class="subsection morph">2.2 Lemmatization</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Lemmatization returns the canonical (base) form of a word. Unlike stemming, the result is always a real dictionary word. It uses WordNet and considers Part-of-Speech (POS).
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>POS Tag</th><th>Part of Speech</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-pill">n</span> (default)</td><td>Noun</td><td>bats → bat, feet → foot</td></tr>
+          <tr><td><span class="tag-pill verb">v</span></td><td>Verb</td><td>stripes → strip, running → run</td></tr>
+          <tr><td><span class="tag-pill adj">a</span></td><td>Adjective</td><td>better → good</td></tr>
+          <tr><td><span class="tag-pill other">r</span></td><td>Adverb</td><td>quickly → quick</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Note</div>
+        If the <code class="inline">pos</code> parameter is omitted, the default is Noun (<code class="inline">n</code>).
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Required Downloads</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code>nltk.<span class="fn">download</span>(<span class="st">'wordnet'</span>)    <span class="cm"># WordNet lexical database</span>
+nltk.<span class="fn">download</span>(<span class="st">'omw-1.4'</span>)    <span class="cm"># Open Multilingual WordNet</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Example 1 — Basic Lemmatization</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk.stem <span class="kw">import</span> WordNetLemmatizer
+lemmatizer = <span class="cl">WordNetLemmatizer</span>()
+
+text = <span class="st">"studies studying cries cry"</span>
+tokenization = nltk.<span class="fn">word_tokenize</span>(text)
+<span class="kw">for</span> w <span class="kw">in</span> tokenization:
+    <span class="fn">print</span>(<span class="st">f"Lemma for </span><span class="bi">{w}</span><span class="st"> is </span><span class="bi">{lemmatizer.<span class="fn">lemmatize</span>(w)}</span><span class="st">"</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Lemma for studies  is study
+Lemma for studying is studying
+Lemma for cries    is cry
+Lemma for cry      is cry</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Example 2 — With POS Tags</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code>lemmatizer = <span class="cl">WordNetLemmatizer</span>()
+<span class="fn">print</span>(<span class="st">"rocks  :"</span>, lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"rocks"</span>))           <span class="cm"># Noun (default)</span>
+<span class="fn">print</span>(<span class="st">"corpora:"</span>, lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"corpora"</span>))         <span class="cm"># Noun (default)</span>
+<span class="fn">print</span>(<span class="st">"better :"</span>, lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"better"</span>, pos=<span class="st">"a"</span>)) <span class="cm"># Adjective</span></code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>rocks  : rock
+corpora: corpus
+better : good</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Example 3 — Single Word Lemmatization</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="fn">print</span>(lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"bats"</span>))            <span class="cm"># → bat</span>
+<span class="fn">print</span>(lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"are"</span>))             <span class="cm"># → are</span>
+<span class="fn">print</span>(lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"feet"</span>))            <span class="cm"># → foot</span>
+<span class="fn">print</span>(lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"stripes"</span>, <span class="st">'v'</span>))   <span class="cm"># → strip</span>
+<span class="fn">print</span>(lemmatizer.<span class="fn">lemmatize</span>(<span class="st">"stripes"</span>, <span class="st">'n'</span>))   <span class="cm"># → stripe</span></code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>bat
+are
+foot
+strip
+stripe</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Example 4 — Lemmatize a Full Sentence</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.stem <span class="kw">import</span> WordNetLemmatizer
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+
+sentence = <span class="st">"The striped bats are hanging on their feet for best"</span>
+lemmatizer = <span class="cl">WordNetLemmatizer</span>()
+word_list = <span class="fn">word_tokenize</span>(sentence)
+lemmatized_output = <span class="st">' '</span>.<span class="fn">join</span>([lemmatizer.<span class="fn">lemmatize</span>(w) <span class="kw">for</span> w <span class="kw">in</span> word_list])
+<span class="fn">print</span>(lemmatized_output)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>The striped bat are hanging on their foot for best</code></pre>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🧪</span>
+      <div class="callout-body">
+        <div class="callout-label">Practice — Find the Output</div>
+        <div class="code-block" style="margin-top:10px;">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-label">Practice Question</span><span class="code-lang">python</span>
+          </div>
+          <pre><code><span class="kw">from</span> nltk.stem <span class="kw">import</span> WordNetLemmatizer
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+text = <span class="st">"The children were running and the mice were eating cheese"</span>
+lemmatizer = <span class="cl">WordNetLemmatizer</span>()
+result = [lemmatizer.<span class="fn">lemmatize</span>(word) <span class="kw">for</span> word <span class="kw">in</span> <span class="fn">word_tokenize</span>(text)]
+<span class="fn">print</span>(result)</code></pre>
+          <div class="output-block">
+            <div class="output-label">▶ EXPECTED OUTPUT</div>
+            <pre><code>['The', 'child', 'were', 'running', 'and', 'the', 'mouse', 'were', 'eating', 'cheese']</code></pre>
+          </div>
+        </div>
+        <p style="margin-top:8px; font-size:13px; color:var(--text-muted);">Note: "children" → "child" &nbsp;|&nbsp; "mice" → "mouse"</p>
+      </div>
+    </div>
+
+    <!-- 2.3 Stemming vs Lemmatization -->
+    <h3 class="subsection morph">2.3 Stemming vs Lemmatization — Comparison</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Stemming</th><th>Lemmatization</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Method</strong></td><td>Rule-based (removes suffixes)</td><td>Dictionary-based (WordNet)</td></tr>
+          <tr><td><strong>Output</strong></td><td>May not be a real word</td><td>Always a real word (lemma)</td></tr>
+          <tr><td><strong>Speed</strong></td><td>⚡ Faster</td><td>Slower (requires lookup)</td></tr>
+          <tr><td><strong>Accuracy</strong></td><td>Lower</td><td>Higher</td></tr>
+          <tr><td><strong>POS Aware?</strong></td><td>❌ No</td><td>✅ Yes (<code class="inline">pos</code> parameter)</td></tr>
+          <tr><td><strong>Example</strong></td><td>"studies" → <code class="inline">studi</code></td><td>"studies" → <code class="inline">study</code></td></tr>
+          <tr><td><strong>Best for</strong></td><td>Search engines, IR</td><td>NLP, text understanding</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 4 — LEVEL 3: SYNTACTIC ANALYSIS
+       ========================================== -->
+  <section id="syntax">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge syntax">Level 3</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Syntactic Analysis</h2>
+    <p class="text-muted">POS Tagging · Chunking · Constituency Parsing · Dependency Parsing</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Syntactic Analysis examines the grammatical structure of sentences, assigning roles to words and grouping them into phrases and hierarchical trees.
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Syntactic Analysis — Imports &amp; Setup</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+<span class="kw">from</span> nltk <span class="kw">import</span> pos_tag, RegexpParser
+<span class="kw">from</span> nltk.parse <span class="kw">import</span> DependencyGrammar
+
+nltk.<span class="fn">download</span>(<span class="st">'punkt_tab'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'averaged_perceptron_tagger_eng'</span>)   <span class="cm"># POS tagger</span></code></pre>
+    </div>
+
+    <!-- 3.1 POS Tagging -->
+    <h3 class="subsection syntax">3.1 Part-of-Speech (POS) Tagging</h3>
+    <p>POS tagging assigns a grammatical category (noun, verb, adjective, etc.) to each word in a sentence.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tag</th><th>Meaning</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-pill">NN</span></td><td>Noun, singular</td><td>"apple", "school"</td></tr>
+          <tr><td><span class="tag-pill">NNS</span></td><td>Noun, plural</td><td>"apples", "students"</td></tr>
+          <tr><td><span class="tag-pill">NNP</span></td><td>Proper noun, singular</td><td>"Tom", "Google"</td></tr>
+          <tr><td><span class="tag-pill">NNPS</span></td><td>Proper noun, plural</td><td>"Avengers"</td></tr>
+          <tr><td><span class="tag-pill verb">VB</span></td><td>Verb, base form</td><td>"eat", "run"</td></tr>
+          <tr><td><span class="tag-pill verb">VBD</span></td><td>Verb, past tense</td><td>"ate", "went"</td></tr>
+          <tr><td><span class="tag-pill verb">VBZ</span></td><td>Verb, 3rd person singular</td><td>"eats", "goes"</td></tr>
+          <tr><td><span class="tag-pill verb">VBG</span></td><td>Verb, gerund/present participle</td><td>"eating", "running"</td></tr>
+          <tr><td><span class="tag-pill adj">JJ</span></td><td>Adjective</td><td>"big", "early"</td></tr>
+          <tr><td><span class="tag-pill other">RB</span></td><td>Adverb</td><td>"quickly", "everyday"</td></tr>
+          <tr><td><span class="tag-pill det">DT</span></td><td>Determiner</td><td>"the", "a", "an"</td></tr>
+          <tr><td><span class="tag-pill other">IN</span></td><td>Preposition / subordinating conj.</td><td>"in", "on", "at"</td></tr>
+          <tr><td><span class="tag-pill other">PRP</span></td><td>Personal pronoun</td><td>"I", "he", "she"</td></tr>
+          <tr><td><span class="tag-pill other">CD</span></td><td>Cardinal number</td><td>"three", "5.1"</td></tr>
+          <tr><td><span class="tag-pill other">TO</span></td><td>Preposition "to"</td><td>"to"</td></tr>
+          <tr><td><span class="tag-pill other">CC</span></td><td>Coordinating conjunction</td><td>"and", "but", "or"</td></tr>
+          <tr><td><span class="tag-pill other">WRB</span></td><td>Wh-adverb</td><td>"when", "where"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">POS Tagging — Example 1</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk <span class="kw">import</span> word_tokenize, pos_tag
+
+sentence = <span class="st">"Tom ate an apple at 10:00 am."</span>
+tokens = <span class="fn">word_tokenize</span>(sentence)
+tags = <span class="fn">pos_tag</span>(tokens)
+<span class="fn">print</span>(tags)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>[('Tom', 'NNP'), ('ate', 'VBD'), ('an', 'DT'), ('apple', 'NN'),
+ ('at', 'IN'), ('10:00', 'CD'), ('am', 'NN')]</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">POS Tagging — Example 2</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code>text = <span class="st">"I went to the school early morning."</span>
+tokens = <span class="fn">word_tokenize</span>(text)
+tag = nltk.<span class="fn">pos_tag</span>(tokens)
+<span class="fn">print</span>(tokens)
+<span class="fn">print</span>(tag)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['I', 'went', 'to', 'the', 'school', 'early', 'morning', '.']
+[('I', 'PRP'), ('went', 'VBD'), ('to', 'TO'), ('the', 'DT'),
+ ('school', 'NN'), ('early', 'JJ'), ('morning', 'NN'), ('.', '.')]</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">POS Tagging — Example 3 (News Sentence)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.tokenize <span class="kw">import</span> word_tokenize
+<span class="kw">from</span> nltk.tag <span class="kw">import</span> pos_tag
+
+ex = <span class="st">'European authorities fined Google a record $5.1 billion on Wednesday'</span>
+
+<span class="kw">def</span> <span class="fn">preprocess</span>(sent):
+    sent = <span class="fn">word_tokenize</span>(sent)
+    sent = <span class="fn">pos_tag</span>(sent)
+    <span class="kw">return</span> sent
+
+<span class="fn">print</span>(<span class="fn">preprocess</span>(ex))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>[('European', 'JJ'), ('authorities', 'NNS'), ('fined', 'VBD'),
+ ('Google', 'NNP'), ('a', 'DT'), ('record', 'NN'), ('$', '$'),
+ ('5.1', 'CD'), ('billion', 'CD'), ('on', 'IN'), ('Wednesday', 'NNP')]</code></pre>
+      </div>
+    </div>
+
+    <!-- 3.2 Chunking -->
+    <h3 class="subsection syntax">3.2 Chunking / Shallow Parsing</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Chunking (shallow parsing) groups words into meaningful phrases such as Noun Phrases (NP) and Verb Phrases (VP) using Regular Expression grammar rules.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">&lt;DT&gt;</code></td><td>Match determiner tag</td><td>"the", "a", "an"</td></tr>
+          <tr><td><code class="inline">&lt;JJ&gt;*</code></td><td>Zero or more adjectives</td><td>Optional: "big", "red"</td></tr>
+          <tr><td><code class="inline">&lt;NN&gt;+</code></td><td>One or more nouns</td><td>"school", "apple book"</td></tr>
+          <tr><td><code class="inline">?</code></td><td>Optional element</td><td><code class="inline">&lt;DT&gt;?</code> = optional determiner</td></tr>
+          <tr><td><code class="inline">{}</code></td><td>Chunk pattern</td><td><code class="inline">NP: {&lt;DT&gt;?&lt;JJ&gt;*&lt;NN&gt;}</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NP Chunking — Example 1</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+text = <span class="st">"The boy ate the apple quickly"</span>
+tokens = nltk.<span class="fn">word_tokenize</span>(text)
+tag = nltk.<span class="fn">pos_tag</span>(tokens)
+
+grammar = <span class="st">"NP: {&lt;DT&gt;?&lt;JJ&gt;*&lt;NN&gt;}"</span>
+cp = nltk.<span class="cl">RegexpParser</span>(grammar)
+result = cp.<span class="fn">parse</span>(tag)
+<span class="fn">print</span>(result)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>(S (NP The/DT boy/NN) ate/VB (NP the/DT apple/NN) quickly/RB)</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NP + VP Chunking</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk <span class="kw">import</span> word_tokenize, pos_tag, RegexpParser
+
+sentence = <span class="st">"Tom ate an apple at 10:00 am."</span>
+tokens = <span class="fn">word_tokenize</span>(sentence)
+tagged = <span class="fn">pos_tag</span>(tokens)
+
+grammar = <span class="st">r"""
+    NP: {&lt;DT&gt;?&lt;JJ&gt;*&lt;NN|NNP|NNS&gt;+}
+    VP: {&lt;VB.*&gt;&lt;NP|PP|CLAUSE&gt;*}
+"""</span>
+parser = <span class="cl">RegexpParser</span>(grammar)
+tree = parser.<span class="fn">parse</span>(tagged)
+<span class="fn">print</span>(tree)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>(S
+  (NP Tom/NNP)
+  (VP ate/VBD (NP an/DT apple/NN))
+  at/IN 10:00/CD am/NN ./.)</code></pre>
+      </div>
+    </div>
+
+    <!-- 3.3 Constituency Parsing -->
+    <h3 class="subsection syntax">3.3 Constituency Parsing</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Constituency Parsing builds a full hierarchical tree showing how words group into nested phrases. The <code class="inline">result.draw()</code> method visualizes the tree in a window.
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Constituency Parsing — Pre-tagged Input</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+sentence = [(<span class="st">"the"</span>, <span class="st">"DT"</span>), (<span class="st">"little"</span>, <span class="st">"JJ"</span>), (<span class="st">"yellow"</span>, <span class="st">"JJ"</span>),
+            (<span class="st">"dog"</span>, <span class="st">"NN"</span>), (<span class="st">"barked"</span>, <span class="st">"VBD"</span>), (<span class="st">"at"</span>, <span class="st">"IN"</span>),
+            (<span class="st">"the"</span>, <span class="st">"DT"</span>), (<span class="st">"cat"</span>, <span class="st">"NN"</span>)]
+
+grammar = <span class="st">"NP: {&lt;DT&gt;?&lt;JJ&gt;*&lt;NN&gt;}"</span>
+cp = nltk.<span class="cl">RegexpParser</span>(grammar)
+result = cp.<span class="fn">parse</span>(sentence)
+<span class="fn">print</span>(result)
+result.<span class="fn">draw</span>()   <span class="cm"># Opens visual tree window</span></code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>(S
+  (NP the/DT little/JJ yellow/JJ dog/NN)
+  barked/VBD
+  at/IN
+  (NP the/DT cat/NN))</code></pre>
+      </div>
+    </div>
+
+    <!-- 3.4 Dependency Parsing -->
+    <h3 class="subsection syntax">3.4 Dependency Parsing</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Dependency Grammar focuses on how individual words relate to each other (head → dependent relationships), rather than grouping words into phrases. It produces a labeled directed graph.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Term</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Head</strong></td><td>The governing word in a relationship (usually the verb)</td></tr>
+          <tr><td><strong>Dependent</strong></td><td>A word that modifies or relates to the head</td></tr>
+          <tr><td><code class="inline">SBJ</code></td><td>Subject dependency label</td></tr>
+          <tr><td><code class="inline">NMOD</code></td><td>Noun modifier dependency label</td></tr>
+          <tr><td><code class="inline">nsubj</code></td><td>Nominal subject (modern parsers)</td></tr>
+          <tr><td><code class="inline">dobj</code></td><td>Direct object dependency label</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Dependency Parsing — "I shot an elephant in my pajamas"</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+groucho_dep_grammar = nltk.<span class="cl">DependencyGrammar</span>.<span class="fn">fromstring</span>(<span class="st">"""
+    'shot'    -> 'I' | 'elephant' | 'in'
+    'elephant' -> 'an' | 'in'
+    'in'      -> 'pajamas'
+    'pajamas' -> 'my'
+"""</span>)
+<span class="fn">print</span>(groucho_dep_grammar)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Dependency grammar with 7 productions
+  'shot'    -> 'I'
+  'shot'    -> 'elephant'
+  'shot'    -> 'in'
+  'elephant' -> 'an'
+  'elephant' -> 'in'
+  'in'      -> 'pajamas'
+  'pajamas' -> 'my'</code></pre>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Important Note</div>
+        This NLTK example captures bare dependency information (which word depends on which head) <strong>without specifying the dependency type</strong> (subject, object, modifier, etc.).
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 5 — LEVEL 4: SEMANTIC ANALYSIS
+       (NER + SCD)
+       ========================================== -->
+  <section id="semantic">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge semantic">Level 4</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Semantic Analysis</h2>
+    <p class="text-muted">Named Entity Recognition (NER) · Semantic Class Disambiguation (SCD)</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Semantic Analysis extracts meaning from text — going beyond grammar to understand <em>who, what, when, and where</em>. It includes Named Entity Recognition (NER) and the extended task of Semantic Class Disambiguation (SCD).
+      </div>
+    </div>
+
+    <!-- 4.1 NER -->
+    <h3 class="subsection semantic">4.1 Named Entity Recognition (NER)</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tag</th><th>Entity Type</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-pill">PERSON</span></td><td>Person names</td><td>"Robert Downey Jr.", "Chris Evans"</td></tr>
+          <tr><td><span class="tag-pill verb">ORGANIZATION</span></td><td>Organizations, companies</td><td>"IBM", "Marvel Studios"</td></tr>
+          <tr><td><span class="tag-pill adj">GPE</span></td><td>Geopolitical entity (location)</td><td>"Boston", "Jordan", "USA"</td></tr>
+          <tr><td><span class="tag-pill other">geo</span></td><td>Geographical entity</td><td>"Mississippi River", "Alps"</td></tr>
+          <tr><td><span class="tag-pill det">tim</span></td><td>Time indicator</td><td>"Wednesday", "2020", "10:00 am"</td></tr>
+          <tr><td><span class="tag-pill other">art</span></td><td>Artifact</td><td>"iPhone", "Boeing 747"</td></tr>
+          <tr><td><span class="tag-pill other">eve</span></td><td>Event</td><td>"Olympics", "World Cup"</td></tr>
+          <tr><td><span class="tag-pill other">nat</span></td><td>Natural phenomenon</td><td>"hurricane", "earthquake"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection semantic">NER Pipeline</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="pipe-label">Raw Text</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">Tokenize</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">POS Tag</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">ne_chunk()</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="pipe-label">🏷️ Entities</span></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NER Imports &amp; Setup</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+<span class="kw">from</span> nltk <span class="kw">import</span> word_tokenize, pos_tag, ne_chunk
+
+nltk.<span class="fn">download</span>(<span class="st">'words'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'punkt_tab'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'averaged_perceptron_tagger_eng'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'maxent_ne_chunker_tab'</span>)   <span class="cm"># NER model</span>
+nltk.<span class="fn">download</span>(<span class="st">'wordnet'</span>)
+nltk.<span class="fn">download</span>(<span class="st">'stopwords'</span>)</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <div class="callout-label">Why Capitalization Matters for NER</div>
+        NER relies heavily on capitalization to detect proper nouns (NNP/NNPS). <code class="inline">"boston"</code> would likely NOT be detected as a location, but <code class="inline">"Boston"</code> will be detected as <code class="inline">(GPE Boston)</code>.
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div class="callout-body">
+        <div class="callout-label">Why POS Tagging is Required for NER</div>
+        <code class="inline">ne_chunk()</code> requires POS-tagged input. It uses the POS tags to determine which words are proper nouns (NNP) before classifying them as named entities.
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NER Example 1 — Simple One-liner</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk <span class="kw">import</span> word_tokenize, pos_tag, ne_chunk
+
+input_str = <span class="st">'Bill works for IBM so he went to Boston for a conference in 2020.'</span>
+<span class="fn">print</span>(<span class="fn">ne_chunk</span>(<span class="fn">pos_tag</span>(<span class="fn">word_tokenize</span>(input_str))))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>(S
+  (PERSON Bill/NNP)
+  works/VBZ for/IN
+  (ORGANIZATION IBM/NNP)
+  so/IN he/PRP went/VBD to/TO
+  (GPE Boston/NNP)
+  for/IN a/DT conference/NN in/IN 2020/CD ./.)</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NER Pipeline Example — "I live in Jordan"</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk <span class="kw">import</span> word_tokenize, pos_tag, ne_chunk
+
+text = <span class="st">"I live in Jordan"</span>
+tokens   = <span class="fn">word_tokenize</span>(text)   <span class="cm"># Step 1</span>
+tagged   = <span class="fn">pos_tag</span>(tokens)       <span class="cm"># Step 2</span>
+entities = <span class="fn">ne_chunk</span>(tagged)      <span class="cm"># Step 3</span>
+<span class="fn">print</span>(entities)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Tokenization: ['I', 'live', 'in', 'Jordan']
+POS:          [('I', 'PRP'), ('live', 'VBP'), ('in', 'IN'), ('Jordan', 'NNP')]
+(S I/PRP live/VBP in/IN (GPE Jordan/NNP))</code></pre>
+      </div>
+    </div>
+
+    <!-- 4.2 SCD -->
+    <h3 class="subsection semantic" style="margin-top:40px;">4.2 Semantic Class Disambiguation (SCD)</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Semantic Class Disambiguation (SCD) is a partial task for Word Sense Disambiguation (WSD). Words in text are classified into semantic classes based on their syntactic and semantic features.
+      </div>
+    </div>
+
+    <p>The task of SCD <strong>extends</strong> NER: while NER is restricted to entity names of proper nouns (location, person, organization), SCD can also classify <strong>common nouns, verbs, adjectives, and adverbs</strong> into broader semantic classes using machine-readable dictionaries.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card nltk">
+        <span class="cc-header">NER</span>
+        <ul>
+          <li>Proper nouns only</li>
+          <li>Recognizes: Person, Org, GPE, Date…</li>
+          <li>Tom → <strong>PERSON</strong></li>
+          <li>10:00 am → <strong>TIME</strong></li>
+          <li>Limited to named entities</li>
+        </ul>
+      </div>
+      <div class="compare-card spacy">
+        <span class="cc-header">SCD</span>
+        <ul>
+          <li>Proper &amp; common nouns + verbs</li>
+          <li>Recognizes: food, animal, emotion, consumption…</li>
+          <li>ate → <strong>verb.consumption</strong></li>
+          <li>apple → <strong>noun.food</strong></li>
+          <li>Broader semantic coverage</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🔍</span>
+      <div class="callout-body">
+        <div class="callout-label">Example Sentence — NER vs SCD</div>
+        <p style="margin:8px 0 4px; font-style:italic;">"Tom ate an apple at 10:00 am."</p>
+        <div class="table-wrap" style="margin-top:10px;">
+          <table>
+            <thead><tr><th>Word</th><th>NER Tag</th><th>SCD Tag</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Tom</strong></td><td><span class="tag-pill">PERSON</span></td><td><span class="tag-pill">noun.person</span></td></tr>
+              <tr><td><strong>ate</strong></td><td><span class="tag-pill other">—</span></td><td><span class="tag-pill verb">verb.consumption</span></td></tr>
+              <tr><td><strong>apple</strong></td><td><span class="tag-pill other">—</span></td><td><span class="tag-pill adj">noun.food</span></td></tr>
+              <tr><td><strong>10:00 am</strong></td><td><span class="tag-pill det">TIME</span></td><td><span class="tag-pill det">noun.time</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="scd-annotation">
+      <div class="scd-title">SCD Annotation — Visual Token Display</div>
+      <div class="scd-sentence">
+        <div class="scd-token"><span class="scd-word">Tom</span><span class="scd-class person">noun.person</span></div>
+        <div class="scd-token"><span class="scd-word">ate</span><span class="scd-class consumption">verb.consumption</span></div>
+        <div class="scd-token"><span class="scd-word">an</span><span class="scd-class neutral">det</span></div>
+        <div class="scd-token"><span class="scd-word">apple</span><span class="scd-class food">noun.food</span></div>
+        <div class="scd-token"><span class="scd-word">at</span><span class="scd-class neutral">prep</span></div>
+        <div class="scd-token"><span class="scd-word">10:00 am</span><span class="scd-class time">noun.time</span></div>
+      </div>
+    </div>
+
+    <h3 class="subsection semantic">Semantic Classes of Nouns</h3>
+    <p>Machine-readable dictionaries classify nouns into semantic categories such as: <em>possession, food, animal, feeling, artifact, plant</em>…</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Noun</th><th>Semantic Class</th></tr></thead>
+        <tbody>
+          <tr><td><strong>apple</strong></td><td><span class="tag-pill adj">noun.food</span></td></tr>
+          <tr><td><strong>dog</strong></td><td><span class="tag-pill other">noun.animal</span></td></tr>
+          <tr><td><strong>sales</strong></td><td><span class="tag-pill det">noun.possession</span></td></tr>
+          <tr><td><strong>happiness</strong></td><td><span class="tag-pill verb">noun.feeling</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection semantic">Semantic Classes of Verbs</h3>
+    <p>Verbs are classified into categories such as: <em>change, emotion, consumption, perception, possession, cognition</em>…</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Verb</th><th>Semantic Class</th></tr></thead>
+        <tbody>
+          <tr><td><strong>like, hate</strong></td><td><span class="tag-pill verb">verb.emotion</span></td></tr>
+          <tr><td><strong>hear, see</strong></td><td><span class="tag-pill adj">verb.perception</span></td></tr>
+          <tr><td><strong>improve, increase</strong></td><td><span class="tag-pill other">verb.change</span></td></tr>
+          <tr><td><strong>own</strong></td><td><span class="tag-pill det">verb.possession</span></td></tr>
+          <tr><td><strong>study</strong></td><td><span class="tag-pill">verb.cognition</span></td></tr>
+          <tr><td><strong>eat, drink</strong></td><td><span class="tag-pill verb">verb.consumption</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">SCD Annotation Notation</div>
+        <p style="margin:0;">Annotated sentence: &nbsp;<em>"I ate an apple."</em></p>
+        <p style="margin:4px 0 0; font-family:'DM Mono',monospace; font-size:13px;">
+          I &nbsp; ate<span style="color:var(--accent-2);">[verb.consumption]</span> &nbsp; an &nbsp; apple<span style="color:var(--green);">[noun.food]</span> .
+        </p>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <div class="callout-label">Extended NER in Some Systems</div>
+        Some extended NER systems also include <strong>Event</strong> and <strong>Product</strong> entity types:
+        <ul class="bullet-list" style="margin-top:6px;">
+          <li><em>"TECHNOLOGY SUMMIT 2025 will be held in San Francisco next June."</em> → Event: TECHNOLOGY SUMMIT 2025 · GPE: San Francisco</li>
+          <li><em>"Apple released the iPhone 15 last month."</em> → Organization: Apple · Product: iPhone 15 · Date: last month</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 6 — LEVEL 5: PRAGMATIC ANALYSIS (WSD)
+       ========================================== -->
+  <section id="pragmatic">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge pragmatic">Level 5</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Pragmatic Analysis</h2>
+    <p class="text-muted">Word Sense Disambiguation (WSD) · Lesk Algorithm</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Pragmatic Analysis resolves linguistic ambiguity based on context and real-world knowledge. Word Sense Disambiguation (WSD) is the process of identifying the semantically correct sense (meaning) of a word in a given context.
+      </div>
+    </div>
+
+    <!-- 5.1 WSD Overview -->
+    <h3 class="subsection pragmatic">5.1 What is Word Sense Disambiguation (WSD)?</h3>
+    <p>WSD is useful for words with <strong>multiple meanings</strong>. A string may have many possible interpretations in different contexts, and resolving ambiguity correctly may rely on knowing a lot about the world.</p>
+    <ul class="bullet-list">
+      <li><strong>Richness:</strong> any meaning may be expressed in many ways, and there are immeasurably many meanings.</li>
+      <li>Different WSD systems have been implemented to determine the correct senses of words in text automatically.</li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="callout-icon">🔤</span>
+      <div class="callout-body">
+        <div class="callout-label">Classic Example — The Word "bank"</div>
+        <div class="table-wrap" style="margin-top:10px;">
+          <table>
+            <thead><tr><th>Context Sentence</th><th>Intended Sense</th></tr></thead>
+            <tbody>
+              <tr><td>"I went to the <strong>bank</strong> to deposit money."</td><td>Financial institution</td></tr>
+              <tr><td>"The boy walked along the <strong>bank</strong> of the river."</td><td>Riverbank / land beside water</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5.2 Lesk Algorithm -->
+    <h3 class="subsection pragmatic">5.2 The Lesk Algorithm</h3>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">How Lesk Works</div>
+        <ul class="bullet-list" style="margin-top:4px;">
+          <li>Looks up <strong>all possible meanings (senses)</strong> of a word in WordNet.</li>
+          <li>Compares dictionary <strong>definitions (glosses)</strong> with the context words.</li>
+          <li>Chooses the sense with the <strong>highest overlap</strong> between context and definition.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <div class="callout-label">POS Parameter Is Important</div>
+        Without specifying a POS, Lesk considers <em>all</em> senses (noun, verb, adjective…) and may choose an incorrect one. Always pass the POS when known to improve accuracy.
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD — Import &amp; Required Download</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.wsd <span class="kw">import</span> lesk
+<span class="kw">import</span> nltk
+nltk.<span class="fn">download</span>(<span class="st">'wordnet'</span>)    <span class="cm"># WordNet: sense definitions (glosses)</span>
+nltk.<span class="fn">download</span>(<span class="st">'omw-1.4'</span>)    <span class="cm"># Open Multilingual WordNet support</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD Example 1 — "book" as a verb (appointment)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.wsd <span class="kw">import</span> lesk
+
+<span class="cm"># Context: "book" used as a verb (to reserve)</span>
+sent = [<span class="st">'i'</span>, <span class="st">'book'</span>, <span class="st">'an'</span>, <span class="st">'appointment'</span>, <span class="st">'in'</span>, <span class="st">'this'</span>, <span class="st">'restaurant'</span>, <span class="st">'every'</span>, <span class="st">'week'</span>, <span class="st">'.'</span>]
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'book'</span>, <span class="st">'v'</span>))  <span class="cm"># With POS = verb</span>
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'book'</span>))       <span class="cm"># Without POS → may be wrong</span></code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Synset('reserve.v.04')    ← Correct: "book" as to reserve/schedule
+Synset('script.n.01')     ← Incorrect: Lesk picked a noun sense without POS hint</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD Example 1b — "book" as a noun (reading)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="cm"># Context: "book" used as a noun (a written work)</span>
+sent = [<span class="st">'i'</span>, <span class="st">'read'</span>, <span class="st">'a'</span>, <span class="st">'book'</span>, <span class="st">'every'</span>, <span class="st">'week'</span>, <span class="st">'.'</span>]
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'book'</span>, <span class="st">'n'</span>))  <span class="cm"># With POS = noun</span>
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'book'</span>))       <span class="cm"># Without POS</span></code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Synset('script.n.01')
+Synset('script.n.01')</code></pre>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">🧪</span>
+      <div class="callout-body">
+        <div class="callout-label">Why did Lesk choose script.n.01 instead of book.n.01?</div>
+        <p>Lesk works by <strong>overlap</strong> — it compares context words to all WordNet definitions. Without a POS hint, it may find a small overlap with <code class="inline">script.n.01</code> before checking verb senses.</p>
+        <ul class="bullet-list" style="margin-top:6px;">
+          <li><code class="inline">book.n.01</code> → a written work ✅ Correct sense</li>
+          <li><code class="inline">script.n.01</code> → a written text for a performance</li>
+          <li><code class="inline">reserve.v.04</code> → to schedule / book an appointment ✅ Correct for verb use</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD Example 2a — "bank" (financial institution)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> nltk.wsd <span class="kw">import</span> lesk
+
+<span class="cm"># Context: bank = financial institution</span>
+sent = [<span class="st">'I'</span>, <span class="st">'went'</span>, <span class="st">'to'</span>, <span class="st">'the'</span>, <span class="st">'bank'</span>, <span class="st">'to'</span>, <span class="st">'deposit'</span>, <span class="st">'money'</span>, <span class="st">'.'</span>]
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>, <span class="st">'n'</span>))
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Synset('savings_bank.n.02')   ← bank#2 (financial institution) ✅
+Synset('savings_bank.n.02')</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD Example 2b — "bank" (riverbank)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="cm"># Context: bank = land beside a river</span>
+sent = [<span class="st">'The'</span>, <span class="st">'boy'</span>, <span class="st">'walked'</span>, <span class="st">'along'</span>, <span class="st">'the'</span>, <span class="st">'bank'</span>, <span class="st">'of'</span>, <span class="st">'the'</span>, <span class="st">'river'</span>, <span class="st">'.'</span>]
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>, <span class="st">'n'</span>))
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Synset('bank.n.09')    ← riverbank sense ✅
+Synset('bank.v.07')</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">WSD Example 3 — "bank" (ambiguous sentence)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code>sent = [<span class="st">'The'</span>, <span class="st">'boy'</span>, <span class="st">'sit'</span>, <span class="st">'on'</span>, <span class="st">'the'</span>, <span class="st">'bank'</span>, <span class="st">'the'</span>, <span class="st">'river'</span>, <span class="st">'.'</span>]
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>, <span class="st">'n'</span>))
+<span class="fn">print</span>(<span class="fn">lesk</span>(sent, <span class="st">'bank'</span>))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Synset('savings_bank.n.02')
+Synset('savings_bank.n.02')</code></pre>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Sense Numbers in WordNet</div>
+        <p>WordNet sense numbers (e.g. <code class="inline">bank#2</code>) indicate the frequency/commonality of a sense. Lower numbers are more common senses. <code class="inline">savings_bank.n.02</code> corresponds to the financial institution sense of "bank".</p>
+      </div>
+    </div>
+
+    <!-- 5.3 WSD Reference Table -->
+    <h3 class="subsection pragmatic">5.3 WSD Lesk Function Reference</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Call</th><th>POS</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">lesk(sent, 'word', 'v')</code></td><td>Verb</td><td>Checks only verb senses → more accurate</td></tr>
+          <tr><td><code class="inline">lesk(sent, 'word', 'n')</code></td><td>Noun</td><td>Checks only noun senses → more accurate</td></tr>
+          <tr><td><code class="inline">lesk(sent, 'word', 'a')</code></td><td>Adjective</td><td>Checks only adjective senses</td></tr>
+          <tr><td><code class="inline">lesk(sent, 'word')</code></td><td>None</td><td>Checks all senses → may be incorrect</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       CHAPTER DIVIDER — Chapter 2: spaCy
+       ========================================== -->
+  <div class="chapter-divider">
+    <div class="ch-num">02</div>
+    <div class="ch-content">
+      <div class="ch-eyebrow">Chapter 2</div>
+      <div class="ch-title">spaCy Library</div>
+      <div class="ch-sub">Industrial-strength NLP · Pipelines · Object-Oriented Approach</div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SECTION 7 — SPACY
+       ========================================== -->
+  <section id="spacy">
+    <div class="section-header">
+      <span class="section-level-badge spacy">Chapter 2</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">spaCy Library</h2>
+    <p class="text-muted">Natural Language Processing in Python using spaCy</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">What is spaCy?</div>
+        spaCy is a free, open-source Python library for natural language processing. It is considered one of the most widely used NLP libraries, alongside NLTK. The key advantage of spaCy is that it is designed to work with <strong>large amounts of data</strong> in an optimal and robust manner.
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.1 Installation</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Install spaCy + English Model</span>
+        <span class="code-lang">bash</span>
+      </div>
+      <pre><code><span class="cm"># Step 1: Upgrade pip and install wheel dependencies</span>
+pip install -U pip setuptools wheel
+
+<span class="cm"># Step 2: Install spaCy</span>
+pip install -U spacy
+
+<span class="cm"># Step 3: Download the small English model</span>
+python -m spacy download en_core_web_sm</code></pre>
+    </div>
+
+    <h3 class="subsection spacy">7.2 Model Sizes — en_core_web_*</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Size</th><th>Accuracy</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">en_core_web_sm</code></td><td>Small</td><td>Good</td><td>Fast and lightweight. Default for learning.</td></tr>
+          <tr><td><code class="inline">en_core_web_md</code></td><td>Medium</td><td>Better</td><td>Includes word vectors for similarity tasks.</td></tr>
+          <tr><td><code class="inline">en_core_web_lg</code></td><td>Large</td><td>Best</td><td>Highest accuracy, more memory required.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div class="callout-body">
+        <div class="callout-label">What en_core_web_sm Covers</div>
+        <ul class="bullet-list" style="margin-top:4px;">
+          <li>Tokenization (splitting text into words)</li>
+          <li>Part-of-speech tagging (noun, verb, etc.)</li>
+          <li>Dependency parsing (sentence structure)</li>
+          <li>Named entity recognition (NER) — people, places, dates, etc.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.3 NLTK vs spaCy</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>NLTK</th><th>spaCy</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Primarily designed for research</td><td>Designed for production use</td></tr>
+          <tr><td>2</td><td>Supports many languages</td><td>Trained pipelines for 23 languages, supports 66+</td></tr>
+          <tr><td>3</td><td>String processing, modular architecture</td><td>Object-oriented approach</td></tr>
+          <tr><td>4</td><td>Many algorithms — user selects one</td><td>Uses the best algorithm automatically</td></tr>
+          <tr><td>5</td><td>Can be slower</td><td>Optimized for speed</td></tr>
+          <tr><td>6</td><td>Built using Python</td><td>Built using Cython (compiled to C for speed)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection spacy">7.4 spaCy Pipelines</h3>
+    <p>spaCy introduces the concept of <strong>pipelines</strong>. When you pass a text through a pipeline, it goes through different processing steps (pipes). The output from one step is fed into the next.</p>
+
+    <div class="spacy-pipeline">
+      <div class="spacy-pipe-step"><span class="sp-num">1</span><span class="sp-label">Tokenizer</span><span class="sp-sub">text → tokens</span></div>
+      <div class="spacy-pipe-step"><span class="sp-num">2</span><span class="sp-label">Tagger</span><span class="sp-sub">POS tags</span></div>
+      <div class="spacy-pipe-step"><span class="sp-num">3</span><span class="sp-label">Lemmatizer</span><span class="sp-sub">base forms</span></div>
+      <div class="spacy-pipe-step"><span class="sp-num">4</span><span class="sp-label">Parser</span><span class="sp-sub">dependencies</span></div>
+      <div class="spacy-pipe-step"><span class="sp-num">5</span><span class="sp-label">NER</span><span class="sp-sub">entities</span></div>
+    </div>
+
+    <h3 class="subsection spacy">7.5 Loading the Model</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Loading spaCy — Basic Setup</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="cm"># Import the spaCy library</span>
+<span class="kw">import</span> spacy
+
+<span class="cm"># Load the pre-trained English model</span>
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)</code></pre>
+    </div>
+
+    <h3 class="subsection spacy">7.6 Tokenization using spaCy</h3>
+    <p>Passing a text to a trained model produces the <strong>doc container</strong>. Though it appears similar to the original text, the doc contains valuable metadata for each token.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">spaCy Tokenization</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)
+
+<span class="cm"># Pass text to the model → creates a doc object</span>
+text = <span class="st">"Jennifer is learning quantitative analysis."</span>
+doc = <span class="fn">nlp</span>(text)
+
+<span class="fn">print</span>(doc)         <span class="cm"># Full sentence</span>
+<span class="fn">print</span>(doc[<span class="nu">0</span>])      <span class="cm"># First token</span>
+<span class="fn">print</span>(<span class="fn">len</span>(text))   <span class="cm"># Character count: 43</span>
+<span class="fn">print</span>(<span class="fn">len</span>(doc))    <span class="cm"># Token count: 6</span>
+
+<span class="cm"># doc[0] → token object; text[0] → single character</span>
+<span class="fn">print</span>(doc[<span class="nu">0</span>])      <span class="cm"># Jennifer</span>
+<span class="fn">print</span>(text[<span class="nu">0</span>])     <span class="cm"># J</span>
+
+<span class="kw">for</span> token <span class="kw">in</span> doc:
+    <span class="fn">print</span>(token.text)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Jennifer is learning quantitative analysis.
+Jennifer
+43
+6
+Jennifer
+J
+Jennifer
+is
+learning
+quantitative
+analysis
+.</code></pre>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Note</div>
+        The doc container contains <strong>tokens</strong>. Tokens are the basic building blocks of the spaCy NLP pipeline. They may be a word or a punctuation mark.
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.7 Lemmatization using spaCy</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Lemmatization — token.lemma_</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)
+
+text = <span class="st">"I am going where Jennifer went yesterday."</span>
+doc = <span class="fn">nlp</span>(text)
+
+<span class="cm"># Access the lemma of each token via token.lemma_</span>
+<span class="kw">for</span> token <span class="kw">in</span> doc:
+    <span class="fn">print</span>(token.text, <span class="st">" - "</span>, token.lemma_)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>I         - I
+am        - be
+going     - go
+where     - where
+Jennifer  - Jennifer
+went      - go
+yesterday - yesterday
+.         - .</code></pre>
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.8 Removing Stop Words using spaCy</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Stop Words — Method 1: nlp.Defaults.stop_words</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)
+
+<span class="cm"># Method 1: Get stop words from model defaults</span>
+all_stopwords = nlp.Defaults.stop_words
+<span class="fn">print</span>(<span class="fn">len</span>(all_stopwords))   <span class="cm"># Output: 326</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Stop Words — Method 2: STOP_WORDS import</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="cm"># Method 2: Import directly from spacy language module</span>
+<span class="kw">from</span> spacy.lang.en.stop_words <span class="kw">import</span> STOP_WORDS
+<span class="fn">print</span>(<span class="fn">len</span>(STOP_WORDS))       <span class="cm"># Output: 326</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Stop Words Removal — Complete Example</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)
+
+text = <span class="st">"This is an example sentence that shows how to remove stop words using spaCy."</span>
+doc = <span class="fn">nlp</span>(text)
+
+<span class="cm"># Filter using token.is_stop boolean attribute</span>
+filtered_tokens = [token.text <span class="kw">for</span> token <span class="kw">in</span> doc <span class="kw">if not</span> token.is_stop]
+<span class="fn">print</span>(filtered_tokens)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>['example', 'sentence', 'shows', 'remove', 'stop', 'words', 'using', 'spaCy', '.']</code></pre>
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.9 Part-of-Speech (POS) Tagging using spaCy</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">POS Tagging — token.pos_</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">'en_core_web_sm'</span>)
+
+x = <span class="st">"Robin is an astute programmer"</span>
+doc = <span class="fn">nlp</span>(x)
+
+<span class="cm"># Extract text and POS tag via token.pos_</span>
+pos = [[token.text, token.pos_] <span class="kw">for</span> token <span class="kw">in</span> doc]
+<span class="fn">print</span>(pos)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>[['Robin', 'PROPN'], ['is', 'AUX'], ['an', 'DET'],
+ ['astute', 'ADJ'], ['programmer', 'NOUN']]</code></pre>
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.10 Named Entity Recognition (NER) using spaCy</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NER — .ents property</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+nlp = spacy.<span class="fn">load</span>(<span class="st">'en_core_web_sm'</span>)
+
+<span class="cm"># Sample news-style text</span>
+x = <span class="st">""" India is considering a proposal to guarantee as much as 3 trillion
+rupees ($39 billion) of loans to small businesses as part of a plan
+to restart Asia's third-largest economy, which is reeling under the
+impact of a 40-day lockdown."""</span>
+
+bloomberg = <span class="fn">nlp</span>(x)
+
+<span class="cm"># Extract entities: (entity text, label string, label int)</span>
+entities = [(i, i.label_, i.label) <span class="kw">for</span> i <span class="kw">in</span> bloomberg.ents]
+<span class="fn">print</span>(entities)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>[(India, 'GPE', 384), (as much as 3 trillion rupees, 'PERCENT', 393),
+ (39billion, 'MONEY', 394), (Asia, 'LOC', 385),
+ (third, 'ORDINAL', 396), (40-day, 'DATE', 391)]</code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">NER Visualization — displacy.render()</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">from</span> spacy <span class="kw">import</span> displacy
+
+<span class="cm"># Render colored entity highlights in Jupyter</span>
+displacy.<span class="fn">render</span>(bloomberg, style=<span class="st">"ent"</span>, jupyter=<span class="bi">True</span>)</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <div class="callout-label">Tip</div>
+        <code class="inline">displacy.render(..., style="ent")</code> renders colored entity highlights. Use <code class="inline">style="dep"</code> for dependency parse trees.
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.11 Dependency Parsing using spaCy</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Dependency Parsing — token.dep_</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> spacy
+<span class="kw">from</span> spacy <span class="kw">import</span> displacy
+
+nlp = spacy.<span class="fn">load</span>(<span class="st">"en_core_web_sm"</span>)
+doc = <span class="fn">nlp</span>(<span class="st">"Jennifer is learning quantitative analysis."</span>)
+
+<span class="cm"># Print POS and dependency relation per token</span>
+<span class="kw">for</span> token <span class="kw">in</span> doc:
+    <span class="fn">print</span>(token.text, token.pos_, token.dep_)
+
+<span class="cm"># Visualize the dependency tree</span>
+displacy.<span class="fn">render</span>(doc, style=<span class="st">"dep"</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>Jennifer   PROPN  nsubj
+is         AUX    aux
+learning   VERB   ROOT
+quantitative ADJ  amod
+analysis   NOUN   dobj
+.          PUNCT  punct</code></pre>
+      </div>
+    </div>
+
+    <h3 class="subsection spacy">7.12 Useful Token Attributes in spaCy</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Attribute</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">token.text</code></td><td>str</td><td>Original word string</td></tr>
+          <tr><td><code class="inline">token.lemma_</code></td><td>str</td><td>Base/lemma form of the word</td></tr>
+          <tr><td><code class="inline">token.pos_</code></td><td>str</td><td>Coarse-grained POS tag (NOUN, VERB…)</td></tr>
+          <tr><td><code class="inline">token.tag_</code></td><td>str</td><td>Fine-grained POS tag</td></tr>
+          <tr><td><code class="inline">token.dep_</code></td><td>str</td><td>Syntactic dependency relation</td></tr>
+          <tr><td><code class="inline">token.is_stop</code></td><td>bool</td><td>True if the token is a stop word</td></tr>
+          <tr><td><code class="inline">token.ent_type_</code></td><td>str</td><td>Named entity type (PERSON, GPE…)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       CHAPTER DIVIDER — Chapter 3: Sentiment Analysis
+       ========================================== -->
+  <div class="chapter-divider">
+    <div class="ch-num">03</div>
+    <div class="ch-content">
+      <div class="ch-eyebrow">Chapter 3</div>
+      <div class="ch-title">Sentiment Analysis</div>
+      <div class="ch-sub">Opinion Mining · N-grams · Bag of Words · VADER · NLTK</div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SECTION 8 — SENTIMENT ANALYSIS
+       ========================================== -->
+  <section id="sentiment">
+    <div class="section-header">
+      <span class="section-level-badge sentiment">Chapter 3</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Sentiment Analysis</h2>
+    <p class="text-muted">Opinion Mining · Polarity · Subjectivity · VADER · N-grams · BoW</p>
+
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        Sentiment analysis is the process of discovering people's opinions, emotions, and feelings about a service or product. It determines whether people are satisfied (<strong>positive</strong>), unsatisfied (<strong>negative</strong>), or neutral about a topic.
+      </div>
+    </div>
+
+    <h3 class="subsection sentiment">8.1 Types of Sentiment</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag-pill adj">Positive</span></td><td>Satisfied / happy with the service</td><td>"This movie is amazing!"</td></tr>
+          <tr><td><span class="tag-pill verb">Negative</span></td><td>Unhappy with the service</td><td>"I am very sad today."</td></tr>
+          <tr><td><span class="tag-pill other">Neutral</span></td><td>Neither happy nor unhappy</td><td>"Study is going on as usual."</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection sentiment">8.2 Polarity &amp; Subjectivity</h3>
+
+    <div class="polarity-bar-wrap">
+      <div class="polarity-bar-label">Polarity Scale — float in range [-1, 1]</div>
+      <div class="polarity-track"></div>
+      <div class="polarity-labels">
+        <span>-1 (Very Negative)</span>
+        <span>-0.05</span>
+        <span>0 (Neutral)</span>
+        <span>+0.05</span>
+        <span>+1 (Very Positive)</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Score</th><th>Type</th><th>Range</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Polarity</strong></td><td>float</td><td>[-1, 1]</td><td>1 = very positive; -1 = very negative; 0 = neutral</td></tr>
+          <tr><td><strong>Subjectivity</strong></td><td>float</td><td>[0.0, 1.0]</td><td>0.0 = completely objective (facts); 1.0 = completely subjective (opinion)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection sentiment">8.3 Subjective vs Objective Sentences</h3>
+    <div class="compare-grid">
+      <div class="compare-card spacy">
+        <span class="cc-header">Subjective (Opinion)</span>
+        <ul>
+          <li>"This movie is amazing."</li>
+          <li>"I love this phone; it works perfectly."</li>
+          <li>"The teacher explains very clearly."</li>
+        </ul>
+      </div>
+      <div class="compare-card nltk">
+        <span class="cc-header">Objective (Factual)</span>
+        <ul>
+          <li>"The movie was released in 2023."</li>
+          <li>"This phone has a 5000 mAh battery."</li>
+          <li>"The exam consists of 50 questions."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">📝</span>
+      <div class="callout-body">
+        <div class="callout-label">Note</div>
+        Subjectivity classification can sometimes be harder than polarity classification. An objective document (like a news article) may still contain subjective sentences (e.g. quoting someone's opinion).
+      </div>
+    </div>
+
+    <h3 class="subsection sentiment">8.4 Three Main Approaches to Sentiment Analysis</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Approach</th><th>How it works</th><th>Example Tools</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Knowledge-based</strong></td><td>Uses predefined lexicons (emotion dictionaries). Words are assigned <em>affinity</em> scores to specific emotions.</td><td>VADER, SentiWordNet</td></tr>
+          <tr><td>2</td><td><strong>Statistical</strong></td><td>Machine learning models (SVM, Naive Bayes, LSA, deep learning) trained on labeled corpora.</td><td>scikit-learn, TensorFlow</td></tr>
+          <tr><td>3</td><td><strong>Hybrid</strong></td><td>Combines ML with semantic knowledge (ontologies, semantic networks) to detect subtle implicit sentiments.</td><td>Stanford CoreNLP, NLTK</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">💬</span>
+      <div class="callout-body">
+        <div class="callout-label">Knowledge-based: Emotion Affinity Examples</div>
+        <div class="table-wrap" style="margin-top:10px;">
+          <table>
+            <thead><tr><th>Word</th><th>Emotion Affinity</th></tr></thead>
+            <tbody>
+              <tr><td>"funeral"</td><td><span class="tag-pill other">Sadness</span></td></tr>
+              <tr><td>"exam"</td><td><span class="tag-pill other">Fear / Anxiety</span></td></tr>
+              <tr><td>"promotion"</td><td><span class="tag-pill adj">Joy</span></td></tr>
+              <tr><td>"hospital"</td><td><span class="tag-pill other">Fear / Sadness</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:8px; font-size:13px;"><strong>Statistical example:</strong> "Sara dislikes the customer service." → Holder: Sara · Target: customer service · Sentiment: Negative</p>
+        <p style="margin-top:4px; font-size:13px;"><strong>Hybrid example:</strong> "The hotel is next to a busy highway." → busy highway → noise → negative experience (no explicit sentiment word!)</p>
+      </div>
+    </div>
+
+    <h3 class="subsection sentiment">8.5 N-grams</h3>
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        An N-gram is a contiguous sequence of <em>n</em> items (words/tokens) from a given text. N-gram models are used in sentiment analysis, text classification, and text generation.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>N-gram Type</th><th>n</th><th>Example from "Word clouds from string arrays"</th></tr></thead>
+        <tbody>
+          <tr><td>Unigram</td><td>1</td><td>"Word", "clouds", "from", "string"…</td></tr>
+          <tr><td>Bigram</td><td>2</td><td>"Word clouds", "clouds from", "from string"…</td></tr>
+          <tr><td>Trigram</td><td>3</td><td>"Word clouds from", "clouds from string"…</td></tr>
+          <tr><td>4-gram</td><td>4</td><td>"Word clouds from string"…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <div class="callout-label">Tip</div>
+        N-gram models predict the most probable word following a sequence. Given N-1 words, an N-gram model predicts the next word using probability learned from a training corpus.
+      </div>
+    </div>
+
+    <h3 class="subsection sentiment">8.6 Bag of Words (BoW)</h3>
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">Definition</div>
+        In the Bag-of-Words model, a text is represented by the <strong>set of words it contains</strong> and how many times each word appears. It ignores grammar, sentence structure, and word order. What matters is <strong>which words occur</strong> and their <strong>frequencies</strong>.
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">🔁</span>
+      <div class="callout-body">
+        <div class="callout-label">Key Property</div>
+        "I like NLP" and "NLP like I" have the <strong>same BoW representation</strong> — same words, same counts, different order. BoW ignores word order.
+      </div>
+    </div>
+
+    <p>Analyzing three reviews about Game of Thrones:</p>
+    <ul class="bullet-list">
+      <li>Review 1: "Game of Thrones is an amazing tv series!"</li>
+      <li>Review 2: "Game of Thrones is the best tv series!"</li>
+      <li>Review 3: "Game of Thrones is so great"</li>
+    </ul>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Review</th><th>game</th><th>of</th><th>thrones</th><th>is</th><th>an</th><th>amazing</th><th>tv</th><th>series</th><th>the</th><th>best</th><th>so</th><th>great</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Review 1</strong></td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td><strong>Review 2</strong></td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+          <tr><td><strong>Review 3</strong></td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div class="callout-body">
+        <div class="callout-label">BoW as Feature Vectors</div>
+        <p>The BoW model generates term-frequency vectors used as features for ML classifiers:</p>
+        <p style="font-family:'DM Mono',monospace; font-size:13px; margin:6px 0;">
+          Doc1: [1, 2, 1, 1, 2, 1, 1, 0, 0, 0]<br>
+          Doc2: [0, 1, 1, 1, 0, 1, 0, 1, 1, 1]
+        </p>
+        <p>BoW is a special case of N-grams with <strong>n=1</strong>. Commonly used in email filtering, document classification.</p>
+      </div>
+    </div>
+
+    <h3 class="subsection sentiment">8.7 VADER Sentiment Analysis using NLTK</h3>
+    <div class="callout def">
+      <span class="callout-icon">📖</span>
+      <div class="callout-body">
+        <div class="callout-label">What is VADER?</div>
+        VADER (Valence Aware Dictionary and Sentiment Reasoner) is a lexicon and rule-based sentiment analysis tool specifically adjusted for sentiments expressed in <strong>social media</strong>. It uses the Naive Bayes machine learning method and returns four scores.
+      </div>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-card neg"><div class="sc-key">neg</div><div class="sc-val">0.0–1.0</div><div class="sc-desc">Negative sentiment score</div></div>
+      <div class="score-card neu"><div class="sc-key">neu</div><div class="sc-val">0.0–1.0</div><div class="sc-desc">Neutral sentiment score</div></div>
+      <div class="score-card pos"><div class="sc-key">pos</div><div class="sc-val">0.0–1.0</div><div class="sc-desc">Positive sentiment score</div></div>
+      <div class="score-card comp"><div class="sc-key">compound</div><div class="sc-val">-1 to +1</div><div class="sc-desc">Normalized overall score</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Compound Score</th><th>Classification</th></tr></thead>
+        <tbody>
+          <tr><td>≥ 0.05</td><td><span class="tag-pill adj">Positive</span></td></tr>
+          <tr><td>≤ -0.05</td><td><span class="tag-pill verb">Negative</span></td></tr>
+          <tr><td>Between -0.05 and 0.05</td><td><span class="tag-pill other">Neutral</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Sentiment Analysis — Example 1 (Simple)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+nltk.<span class="fn">download</span>(<span class="st">'vader_lexicon'</span>)
+<span class="kw">from</span> nltk.sentiment <span class="kw">import</span> SentimentIntensityAnalyzer
+
+<span class="cm"># Initialize the pre-trained VADER model</span>
+sia = <span class="cl">SentimentIntensityAnalyzer</span>()
+
+<span class="cm"># Get polarity scores dictionary for a sentence</span>
+<span class="fn">print</span>(sia.<span class="fn">polarity_scores</span>(<span class="st">"Wow, NLTK is really powerful!"</span>))</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>{'neg': 0.0, 'neu': 0.295, 'pos': 0.705, 'compound': 0.8012}
+<span style="color:#6c7086;">
+# neg      → score of negative sentiment
+# pos      → score of positive sentiment (0.705 = mostly positive)
+# neu      → score of neutral content
+# compound → normalized overall sentiment score (-1 to +1)</span></code></pre>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="code-label">Sentiment Analysis — Example 2 (Full Classification Function)</span>
+        <span class="code-lang">python</span>
+      </div>
+      <pre><code><span class="kw">import</span> nltk
+nltk.<span class="fn">download</span>(<span class="st">'vader_lexicon'</span>)
+<span class="kw">from</span> nltk.sentiment <span class="kw">import</span> SentimentIntensityAnalyzer
+
+<span class="kw">def</span> <span class="fn">sentiment_scores</span>(sentence):
+    sid_obj = <span class="cl">SentimentIntensityAnalyzer</span>()
+    sentiment_dict = sid_obj.<span class="fn">polarity_scores</span>(sentence)
+
+    <span class="fn">print</span>(<span class="st">"Overall sentiment dictionary is:"</span>, sentiment_dict)
+    <span class="fn">print</span>(<span class="st">"sentence was rated as"</span>, sentiment_dict[<span class="st">'neg'</span>]*<span class="nu">100</span>, <span class="st">"% Negative"</span>)
+    <span class="fn">print</span>(<span class="st">"sentence was rated as"</span>, sentiment_dict[<span class="st">'neu'</span>]*<span class="nu">100</span>, <span class="st">"% Neutral"</span>)
+    <span class="fn">print</span>(<span class="st">"sentence was rated as"</span>, sentiment_dict[<span class="st">'pos'</span>]*<span class="nu">100</span>, <span class="st">"% Positive"</span>)
+    <span class="fn">print</span>(<span class="st">"Sentence Overall Rated As"</span>, end=<span class="st">" "</span>)
+
+    <span class="cm"># Classify based on compound score thresholds</span>
+    <span class="kw">if</span> sentiment_dict[<span class="st">'compound'</span>] &gt;= <span class="nu">0.05</span>:
+        <span class="fn">print</span>(<span class="st">"Positive"</span>)
+    <span class="kw">elif</span> sentiment_dict[<span class="st">'compound'</span>] &lt;= -<span class="nu">0.05</span>:
+        <span class="fn">print</span>(<span class="st">"Negative"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="st">"Neutral"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="fn">print</span>(<span class="st">"\n1st statement:"</span>)
+    <span class="fn">sentiment_scores</span>(<span class="st">"Geeks For Geeks is the best portal for the computer science students."</span>)
+
+    <span class="fn">print</span>(<span class="st">"\n2nd Statement:"</span>)
+    <span class="fn">sentiment_scores</span>(<span class="st">"study is going on as usual"</span>)
+
+    <span class="fn">print</span>(<span class="st">"\n3rd Statement:"</span>)
+    <span class="fn">sentiment_scores</span>(<span class="st">"I am very sad today."</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-label">▶ OUTPUT</div>
+        <pre><code>1st statement:
+Overall sentiment dictionary is: {'neg': 0.0, 'neu': 0.614, 'pos': 0.386, 'compound': 0.8516}
+sentence was rated as 0.0 % Negative
+sentence was rated as 61.4 % Neutral
+sentence was rated as 38.6 % Positive
+Sentence Overall Rated As Positive
+
+2nd Statement:
+Overall sentiment dictionary is: {'neg': 0.0, 'neu': 1.0, 'pos': 0.0, 'compound': 0.0}
+sentence was rated as 0.0 % Negative
+sentence was rated as 100.0 % Neutral
+sentence was rated as 0.0 % Positive
+Sentence Overall Rated As Neutral
+
+3rd Statement:
+Overall sentiment dictionary is: {'neg': 0.52, 'neu': 0.48, 'pos': 0.0, 'compound': -0.5719}
+sentence was rated as 52.0 % Negative
+sentence was rated as 48.0 % Neutral
+sentence was rated as 0.0 % Positive
+Sentence Overall Rated As Negative</code></pre>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🛠️</span>
+      <div class="callout-body">
+        <div class="callout-label">Open Source Tools for Sentiment Analysis</div>
+        <ul class="bullet-list" style="margin-top:4px;">
+          <li><strong>NLTK</strong> — SentimentIntensityAnalyzer (VADER)</li>
+          <li><strong>Stanford CoreNLP</strong> — Java-based, powerful for news/social media</li>
+          <li>Both use machine learning, statistics, and linguistic rules to automate sentiment on large text collections (web pages, reviews, blogs, social media).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       SECTION 9 — SUMMARY & CHEAT SHEET
+       ========================================== -->
+  <section id="summary">
+    <div class="section-header" style="margin-top:56px;">
+      <span class="section-level-badge summary">Reference</span>
+      <div class="section-divider"></div>
+    </div>
+
+    <h2 class="section-title">Summary &amp; Cheat Sheet</h2>
+    <p class="text-muted">Complete NLP Levels Reference — Levels 1–5 · All Tasks · Downloads</p>
+
+    <!-- Summary table -->
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr><th>Level</th><th>Task</th><th>Library / Module</th><th>NLTK Downloads</th><th>Output</th></tr>
+        </thead>
+        <tbody>
+
+          <!-- Level 1: Lexical (Tokenization + Stop Words only) -->
+          <tr class="level-row-1">
+            <td><span class="level-chip chip-1">1 Lexical</span></td>
+            <td><span class="task-name">Tokenization</span><span class="mono">word_tokenize · sent_tokenize</span></td>
+            <td><code class="inline">nltk.tokenize</code></td>
+            <td><div class="downloads-list"><span class="dl-item">punkt_tab</span></div></td>
+            <td><span class="output-badge ob-tokens">List of tokens</span></td>
+          </tr>
+          <tr class="level-row-1">
+            <td><span class="level-chip chip-1">1 Lexical</span></td>
+            <td><span class="task-name">Stop Words Removal</span></td>
+            <td><code class="inline">nltk.corpus stopwords</code></td>
+            <td><div class="downloads-list"><span class="dl-item">stopwords</span></div></td>
+            <td><span class="output-badge ob-tokens">Filtered token list</span></td>
+          </tr>
+
+          <!-- Level 2: Morphological (Stemming + Lemmatization) -->
+          <tr class="level-row-2">
+            <td><span class="level-chip chip-2">2 Morphological</span></td>
+            <td><span class="task-name">Stemming</span><span class="mono">Porter · Lancaster · Snowball</span></td>
+            <td><code class="inline">nltk.stem</code></td>
+            <td><div class="downloads-list"><span class="dl-item" style="color:var(--text-light);">None (built-in rules)</span></div></td>
+            <td><span class="output-badge ob-stems">Stemmed root forms</span></td>
+          </tr>
+          <tr class="level-row-2">
+            <td><span class="level-chip chip-2">2 Morphological</span></td>
+            <td><span class="task-name">Lemmatization</span><span class="mono">WordNetLemmatizer</span></td>
+            <td><code class="inline">nltk.stem</code></td>
+            <td><div class="downloads-list"><span class="dl-item">wordnet</span><span class="dl-item">omw-1.4</span></div></td>
+            <td><span class="output-badge ob-lemma">Real dictionary words</span></td>
+          </tr>
+
+          <!-- Level 3: Syntactic (3.1–3.4) -->
+          <tr class="level-row-3">
+            <td><span class="level-chip chip-3">3 Syntactic</span></td>
+            <td><span class="task-name">POS Tagging</span><span class="mono">pos_tag()</span></td>
+            <td><code class="inline">nltk</code></td>
+            <td><div class="downloads-list"><span class="dl-item">punkt_tab</span><span class="dl-item">averaged_perceptron_tagger_eng</span></div></td>
+            <td><span class="output-badge ob-tags">POS tag tuples (word, TAG)</span></td>
+          </tr>
+          <tr class="level-row-3">
+            <td><span class="level-chip chip-3">3 Syntactic</span></td>
+            <td><span class="task-name">Chunking</span><span class="mono">RegexpParser</span></td>
+            <td><code class="inline">nltk</code></td>
+            <td><div class="downloads-list"><span class="dl-item">punkt_tab</span><span class="dl-item">averaged_perceptron_tagger_eng</span></div></td>
+            <td><span class="output-badge ob-tree">Phrase chunks (NP, VP)</span></td>
+          </tr>
+          <tr class="level-row-3">
+            <td><span class="level-chip chip-3">3 Syntactic</span></td>
+            <td><span class="task-name">Constituency Parsing</span><span class="mono">RegexpParser + .draw()</span></td>
+            <td><code class="inline">nltk</code></td>
+            <td><div class="downloads-list"><span class="dl-item">punkt_tab</span><span class="dl-item">averaged_perceptron_tagger_eng</span></div></td>
+            <td><span class="output-badge ob-tree">Full parse trees</span></td>
+          </tr>
+          <tr class="level-row-3">
+            <td><span class="level-chip chip-3">3 Syntactic</span></td>
+            <td><span class="task-name">Dependency Parsing</span><span class="mono">DependencyGrammar</span></td>
+            <td><code class="inline">nltk</code></td>
+            <td><div class="downloads-list"><span class="dl-item" style="color:var(--text-light);">None required</span></div></td>
+            <td><span class="output-badge ob-graph">Head→dependent graph</span></td>
+          </tr>
+
+          <!-- Level 4: Semantic (4.1 NER + 4.2 SCD) -->
+          <tr class="level-row-4">
+            <td><span class="level-chip chip-4">4 Semantic</span></td>
+            <td><span class="task-name">Named Entity Recognition (NER)</span><span class="mono">ne_chunk()</span></td>
+            <td><code class="inline">nltk</code></td>
+            <td><div class="downloads-list"><span class="dl-item">words</span><span class="dl-item">punkt_tab</span><span class="dl-item">averaged_perceptron_tagger_eng</span><span class="dl-item">maxent_ne_chunker_tab</span></div></td>
+            <td><span class="output-badge ob-ner">PERSON · ORG · GPE</span></td>
+          </tr>
+          <tr class="level-row-4">
+            <td><span class="level-chip chip-4">4 Semantic</span></td>
+            <td><span class="task-name">Semantic Class Disambiguation (SCD)</span><span class="mono">Extends NER to common nouns &amp; verbs</span></td>
+            <td><code class="inline">nltk / WordNet</code></td>
+            <td><div class="downloads-list"><span class="dl-item">wordnet</span><span class="dl-item">omw-1.4</span></div></td>
+            <td><span class="output-badge ob-scd">noun.food · verb.consumption</span></td>
+          </tr>
+
+          <!-- Level 5: Pragmatic (5.1–5.3 WSD) -->
+          <tr class="level-row-5">
+            <td><span class="level-chip chip-5">5 Pragmatic</span></td>
+            <td><span class="task-name">Word Sense Disambiguation (WSD)</span><span class="mono">lesk() — Lesk Algorithm</span></td>
+            <td><code class="inline">nltk.wsd</code></td>
+            <td><div class="downloads-list"><span class="dl-item">wordnet</span><span class="dl-item">omw-1.4</span></div></td>
+            <td><span class="output-badge ob-wsd">Synset('word.pos.num')</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Full pipeline steps -->
+    <h3 class="subsection" style="margin-top:40px;">Full NLP Processing Pipeline</h3>
+    <div class="pipeline-steps">
+      <div class="ps-row ps-head">
+        <div class="ps-cell">#</div>
+        <div class="ps-cell">Process</div>
+        <div class="ps-cell">Input → Output</div>
+        <div class="ps-cell">Tools Used</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num">1</span></div>
+        <div class="ps-cell"><strong>Lexical Analysis</strong></div>
+        <div class="ps-cell">Raw text → Clean tokens</div>
+        <div class="ps-cell"><code class="inline">word_tokenize</code> · <code class="inline">stopwords</code></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:#5b47a8;">2</span></div>
+        <div class="ps-cell"><strong>Morphological Processing</strong></div>
+        <div class="ps-cell">Tokens → Root forms</div>
+        <div class="ps-cell"><code class="inline">PorterStemmer</code> · <code class="inline">WordNetLemmatizer</code></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:var(--green);">3</span></div>
+        <div class="ps-cell"><strong>POS Tagging</strong></div>
+        <div class="ps-cell">Tokens → Tagged tuples</div>
+        <div class="ps-cell"><code class="inline">pos_tag()</code> · averaged_perceptron_tagger</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:var(--green);">4</span></div>
+        <div class="ps-cell"><strong>Chunking / Parsing</strong></div>
+        <div class="ps-cell">POS tags → Phrase trees</div>
+        <div class="ps-cell"><code class="inline">RegexpParser</code> · <code class="inline">DependencyGrammar</code></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:var(--accent-2);">5</span></div>
+        <div class="ps-cell"><strong>NER (Semantic)</strong></div>
+        <div class="ps-cell">POS tags → Named entities</div>
+        <div class="ps-cell"><code class="inline">ne_chunk()</code> · maxent_ne_chunker</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:var(--accent-2);">6</span></div>
+        <div class="ps-cell"><strong>SCD (Semantic)</strong></div>
+        <div class="ps-cell">Tokens → Semantic classes</div>
+        <div class="ps-cell"><code class="inline">WordNet</code> · Machine-readable dictionaries</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:#7c3aed;">7</span></div>
+        <div class="ps-cell"><strong>WSD (Pragmatic)</strong></div>
+        <div class="ps-cell">Ambiguous words → Correct senses</div>
+        <div class="ps-cell"><code class="inline">lesk()</code> · WordNet Synsets</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-cell"><span class="step-num" style="background:#1a1917;">8</span></div>
+        <div class="ps-cell"><strong>Meaning Extraction</strong></div>
+        <div class="ps-cell">Entities → Structured info</div>
+        <div class="ps-cell">Application-specific processing</div>
+      </div>
+    </div>
+
+    <!-- NLTK downloads cheat sheet -->
+    <h3 class="subsection" style="margin-top:40px;">Quick Reference — NLTK Downloads</h3>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('punkt_tab')</span>
+        <div class="cc-used">Used for: Tokenization</div>
+        <div class="cc-fn">word_tokenize() · sent_tokenize()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('stopwords')</span>
+        <div class="cc-used">Used for: Stop Words</div>
+        <div class="cc-fn">stopwords.words("english")</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('wordnet')</span>
+        <div class="cc-used">Used for: Lemmatization &amp; WSD</div>
+        <div class="cc-fn">WordNetLemmatizer().lemmatize() · lesk()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('omw-1.4')</span>
+        <div class="cc-used">Used for: Lemmatization &amp; WSD support</div>
+        <div class="cc-fn">WordNetLemmatizer() · lesk()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download" style="font-size:10.5px;">nltk.download('averaged_perceptron_tagger_eng')</span>
+        <div class="cc-used">Used for: POS Tagging</div>
+        <div class="cc-fn">pos_tag() · nltk.pos_tag()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download" style="font-size:11px;">nltk.download('maxent_ne_chunker_tab')</span>
+        <div class="cc-used">Used for: Named Entity Recognition</div>
+        <div class="cc-fn">ne_chunk()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('words')</span>
+        <div class="cc-used">Used for: NER support</div>
+        <div class="cc-fn">ne_chunk()</div>
+      </div>
+      <div class="cheat-card">
+        <span class="cc-download">nltk.download('vader_lexicon')</span>
+        <div class="cc-used">Used for: Sentiment Analysis</div>
+        <div class="cc-fn">SentimentIntensityAnalyzer()</div>
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- /container -->
+
+<!-- Footer -->
+<div class="doc-footer">
+  <strong>NLP Linguistic Analysis Guide — Levels 1 through 5 · spaCy · Sentiment Analysis</strong><br>
+  Created by Khaled Alzeer · Python NLTK &amp; spaCy — University Lecture Notes<br>
+  <span>Built with care by Khaled.</span>
+</div>
+
+<!-- Speed dial floating menu -->
+<div class="speed-dial">
+  <a href="YOUR_NLP_REPO_LINK" class="dial-item">
+    <i class="fas fa-brain"></i>
+    <span>NLP Repo</span>
+  </a>
+  <a href="https://github.com/khaledAlzeer" class="dial-item">
+    <i class="fab fa-github"></i>
+    <span>GitHub</span>
+  </a>
+  <a href="https://www.linkedin.com/in/khaled-alzeer-60787b322/" class="dial-item">
+    <i class="fab fa-linkedin"></i>
+    <span>LinkedIn</span>
+  </a>
+  <button class="dial-toggle">
+    <i class="fas fa-plus"></i>
+  </button>
+</div>
+
+<!-- JavaScript: Scroll progress + Scrollspy + Speed Dial -->
+<script>
+  /* Scroll progress bar */
+  (function () {
+    const bar = document.getElementById('scrollProgressBar');
+    function updateProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress  = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = progress.toFixed(2) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+  })();
+
+  /* JS Scrollspy: highlight active sidebar link on scroll */
+  (function () {
+    const sectionIds = [
+      'intro', 'lexical', 'morphological', 'syntax',
+      'semantic', 'pragmatic', 'spacy', 'sentiment', 'summary'
+    ];
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+    const linkMap  = {};
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href').replace('#', '');
+      linkMap[href] = link;
+    });
+    function onScroll() {
+      const scrollY = window.scrollY + 120;
+      let current = sectionIds[0];
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) current = id;
+      });
+      navLinks.forEach(link => link.classList.remove('is-active'));
+      if (linkMap[current]) linkMap[current].classList.add('is-active');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+
+  /* Speed dial toggle */
+  const speedDial = document.querySelector('.speed-dial');
+  const toggleBtn = document.querySelector('.dial-toggle');
+  toggleBtn.addEventListener('click', () => speedDial.classList.toggle('active'));
+</script>
+
+</body>
+</html>
