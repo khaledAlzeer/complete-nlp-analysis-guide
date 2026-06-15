@@ -205,13 +205,9 @@ nltk.download('vader_lexicon')
 
 ## 👨‍💻 Author
 
-### Khaled Alzeer
-
-GitHub:
-https://github.com/khaledAlzeer
-
-LinkedIn:
-https://www.linkedin.com/in/khaled-alzeer-60787b322/
+**Khaled Alzeer**
+- GitHub: [@khaledAlzeer](https://github.com/khaledAlzeer)
+- LinkedIn: [Khaled Alzeer](https://www.linkedin.com/in/khaled-alzeer-60787b322/)
 
 ---
 
