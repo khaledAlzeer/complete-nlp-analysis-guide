@@ -115,6 +115,13 @@ Sentiment Analysis
 
 ---
 
+## 🌐 Live Demo
+
+🔗 View the live website here:  
+[https://khaledalzeer.github.io/nlp-linguistic-analysis-guide/](https://khaledalzeer.github.io/complete-nlp-analysis-guide/)
+
+---
+
 ## 🛠️ Technologies Used
 
 * HTML5
@@ -149,14 +156,6 @@ index.html
 ```
 
 in any modern web browser.
-
----
-
-## 🌐 Live Demo
-
-```text
-https://khaledalzeer.github.io/nlp-linguistic-semantic-studio/
-```
 
 ---
 
